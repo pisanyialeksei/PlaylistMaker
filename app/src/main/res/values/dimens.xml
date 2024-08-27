@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_letter_spacing">0.001</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="main_text_size">22sp</dimen>
+    <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="main_button_height">0dp</dimen>
+    <dimen name="main_button_horizontal_margin">16dp</dimen>
+    <dimen name="main_button_corner_radius">16dp</dimen>
+    <dimen name="main_button_icon_padding">8dp</dimen>
+    <dimen name="settings_button_height">61dp</dimen>
+</resources>
