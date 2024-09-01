@@ -13,6 +13,7 @@
         android:titleTextColor="@color/white"/>
 
     <Button
+        android:id="@+id/search_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_button_height"
         android:layout_weight="1"
@@ -32,6 +33,7 @@
         app:cornerRadius="@dimen/main_button_corner_radius"/>
 
     <Button
+        android:id="@+id/library_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_button_height"
         android:layout_weight="1"
@@ -50,6 +52,7 @@
         app:cornerRadius="@dimen/main_button_corner_radius"/>
 
     <Button
+        android:id="@+id/settings_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_button_height"
         android:layout_weight="1"
