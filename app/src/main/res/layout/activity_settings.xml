@@ -5,13 +5,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:navigationIcon="@drawable/ic_back"
-        android:title="@string/settings_title"
-        android:titleTextColor="@color/black_russian"/>
+        android:layout_marginBottom="@dimen/toolbar_margin_bottom"
+        app:navigationIcon="@drawable/ic_back"
+        app:contentInsetStartWithNavigation="64dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/toolbar_title_padding_top"
+        android:paddingBottom="@dimen/toolbar_title_padding_bottom"
+        android:text="@string/settings_title"
+        android:textColor="@color/black_russian"
+        android:textSize="@dimen/main_text_size"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
@@ -23,7 +34,7 @@
         android:letterSpacing="@dimen/button_letter_spacing"
         android:gravity="start|center"
         android:paddingStart="16dp"
-        android:paddingEnd="17dp"/>
+        android:paddingEnd="18dp"/>
 
     <Button
         android:layout_width="match_parent"
