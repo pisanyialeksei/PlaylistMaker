@@ -6,82 +6,36 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
+        style="@style/Toolbar"
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        android:layout_marginBottom="@dimen/toolbar_margin_bottom"
         app:navigationIcon="@drawable/ic_back"
         app:contentInsetStartWithNavigation="64dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/toolbar_title_padding_top"
-        android:paddingBottom="@dimen/toolbar_title_padding_bottom"
-        android:text="@string/settings_title"
-        android:textColor="@color/black_russian"
-        android:textSize="@dimen/main_text_size"/>
+        style="@style/ToolbarTitle"
+        android:text="@string/settings_title"/>
 
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.SwitchCompat
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
-        android:backgroundTint="@color/white"
+        style="@style/SettingsButton"
         android:text="@string/dark_theme"
-        android:textColor="@color/black_russian"
-        android:textSize="@dimen/settings_text_size"
-        android:letterSpacing="@dimen/button_letter_spacing"
-        android:gravity="start|center"
         android:paddingStart="16dp"
         android:paddingEnd="18dp"/>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
-        android:background="@android:color/transparent"
+        style="@style/SettingsButton"
         android:text="@string/share"
-        android:textColor="@color/black_russian"
-        android:textSize="@dimen/settings_text_size"
-        android:textAllCaps="false"
-        android:fontFamily="sans-serif"
-        android:letterSpacing="@dimen/button_letter_spacing"
-        android:gravity="start|center"
-        app:icon="@drawable/ic_share"
-        app:iconSize="@dimen/icon_size"
-        app:iconGravity="end"
-        app:iconTint="@color/aluminium_snow"/>
+        app:icon="@drawable/ic_share"/>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
-        android:background="@android:color/transparent"
+        style="@style/SettingsButton"
         android:text="@string/support"
-        android:textColor="@color/black_russian"
-        android:textSize="@dimen/settings_text_size"
-        android:textAllCaps="false"
-        android:fontFamily="sans-serif"
-        android:letterSpacing="@dimen/button_letter_spacing"
-        android:gravity="start|center"
-        app:icon="@drawable/ic_support"
-        app:iconSize="@dimen/icon_size"
-        app:iconGravity="end"
-        app:iconTint="@color/aluminium_snow"/>
+        app:icon="@drawable/ic_support"/>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
-        android:background="@android:color/transparent"
+        style="@style/SettingsButton"
         android:text="@string/user_agreement"
-        android:textColor="@color/black_russian"
-        android:textSize="@dimen/settings_text_size"
-        android:textAllCaps="false"
-        android:fontFamily="sans-serif"
-        android:letterSpacing="@dimen/button_letter_spacing"
-        android:gravity="start|center"
-        app:icon="@drawable/ic_arrow_forward"
-        app:iconSize="@dimen/icon_size"
-        app:iconGravity="end"
-        app:iconTint="@color/aluminium_snow"/>
+        app:icon="@drawable/ic_arrow_forward"/>
 
 </LinearLayout>
