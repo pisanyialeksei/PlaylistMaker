@@ -1,19 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="@color/background_blue">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_marginBottom="@dimen/toolbar_margin_bottom">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/toolbar_title_padding_top"
+            android:paddingBottom="@dimen/toolbar_title_padding_bottom"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/main_text_size" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_button_height"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:text="@string/search_title"
+        android:textColor="@color/black_russian"
+        android:textSize="@dimen/main_text_size"
+        android:textAllCaps="false"
+        android:letterSpacing="@dimen/button_letter_spacing"
+        android:layout_marginHorizontal="@dimen/main_button_horizontal_margin"
+        app:icon="@drawable/ic_search"
+        app:iconSize="@dimen/icon_size"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        app:iconPadding="@dimen/main_button_icon_padding"
+        app:cornerRadius="@dimen/main_button_corner_radius"/>
+
+    <Button
+        android:id="@+id/library_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_button_height"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:text="@string/library_title"
+        android:textColor="@color/black_russian"
+        android:textSize="@dimen/main_text_size"
+        android:textAllCaps="false"
+        android:letterSpacing="@dimen/button_letter_spacing"
+        android:layout_marginHorizontal="@dimen/main_button_horizontal_margin"
+        app:icon="@drawable/ic_library"
+        app:iconSize="@dimen/icon_size"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        app:iconPadding="@dimen/main_button_icon_padding"
+        app:cornerRadius="@dimen/main_button_corner_radius"/>
+
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_button_height"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        android:text="@string/settings_title"
+        android:textColor="@color/black_russian"
+        android:textSize="@dimen/main_text_size"
+        android:textAllCaps="false"
+        android:letterSpacing="@dimen/button_letter_spacing"
+        android:layout_marginHorizontal="@dimen/main_button_horizontal_margin"
+        android:layout_marginBottom="28dp"
+        app:icon="@drawable/ic_settings"
+        app:iconSize="@dimen/icon_size"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        app:iconPadding="@dimen/main_button_icon_padding"
+        app:cornerRadius="@dimen/main_button_corner_radius"/>
+
+</LinearLayout>
