@@ -6,14 +6,14 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        style="@style/Toolbar"
         android:id="@+id/toolbar"
-        app:navigationIcon="@drawable/ic_back"
-        app:contentInsetStartWithNavigation="64dp">
+        style="@style/Toolbar"
+        app:contentInsetStartWithNavigation="64dp"
+        app:navigationIcon="@drawable/ic_back">
 
-    <TextView
-        style="@style/ToolbarTitle"
-        android:text="@string/settings_title"/>
+        <TextView
+            style="@style/ToolbarTitle"
+            android:text="@string/settings_title" />
 
     </androidx.appcompat.widget.Toolbar>
 
