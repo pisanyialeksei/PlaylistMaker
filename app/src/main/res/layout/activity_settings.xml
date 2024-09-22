@@ -25,16 +25,19 @@
 
     <Button
         style="@style/SettingsButton"
+        android:id="@+id/share"
         android:text="@string/share"
         app:icon="@drawable/ic_share"/>
 
     <Button
         style="@style/SettingsButton"
+        android:id="@+id/support"
         android:text="@string/support"
         app:icon="@drawable/ic_support"/>
 
     <Button
         style="@style/SettingsButton"
+        android:id="@+id/agreement"
         android:text="@string/user_agreement"
         app:icon="@drawable/ic_arrow_forward"/>
 
