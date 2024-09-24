@@ -48,4 +48,9 @@
         <item name="iconGravity">end</item>
         <item name="iconTint">@color/aluminium_snow</item>
     </style>
+
+    <style name="SearchInputImageView">
+        <item name="tint">@color/aluminium_snow</item>
+        <item name="android:background">"@android:color/transparent"</item>
+    </style>
 </resources>

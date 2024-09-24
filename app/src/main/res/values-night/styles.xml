@@ -15,4 +15,9 @@
         <item name="iconGravity">end</item>
         <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
+
+    <style name="SearchInputImageView">
+        <item name="tint">@color/black_russian</item>
+        <item name="android:background">"@android:color/transparent"</item>
+    </style>
 </resources>
