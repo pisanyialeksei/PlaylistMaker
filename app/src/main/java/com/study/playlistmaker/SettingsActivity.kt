@@ -14,15 +14,14 @@ class SettingsActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
+            finish()
         }
 
         val shareButton = findViewById<Button>(R.id.share)
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, R.string.share_link)
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_link))
             }
             startActivity(shareIntent)
         }
@@ -31,9 +30,9 @@ class SettingsActivity : AppCompatActivity() {
         supportButton.setOnClickListener {
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(R.string.support_email))
-                putExtra(Intent.EXTRA_SUBJECT, R.string.support_mail_subject)
-                putExtra(Intent.EXTRA_TEXT, R.string.support_mail_body)
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_mail_subject))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.support_mail_body))
             }
             startActivity(supportIntent)
         }
