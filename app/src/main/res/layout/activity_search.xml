@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SearchActivity">
+    tools:context=".search.SearchActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -47,14 +47,10 @@
 
             <EditText
                 android:id="@+id/search_edit_text"
+                style="@style/SearchInputHint"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="@string/search_title"
-                android:inputType="text|textNoSuggestions"
-                android:textColor="@color/black_russian"
-                android:textSize="@dimen/settings_text_size" />
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/search_edit_text_clear"
@@ -67,6 +63,13 @@
         </LinearLayout>
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
 </LinearLayout>

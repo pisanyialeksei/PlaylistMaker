@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorOnPrimary">@color/black_russian</item>
+        <item name="iconTint">@color/aluminium_snow</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
