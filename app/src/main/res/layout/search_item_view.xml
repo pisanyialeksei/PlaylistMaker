@@ -43,7 +43,7 @@
             android:layout_height="13dp"
             android:layout_marginTop="@dimen/search_item_subtitle_margin_top"
             android:scaleType="center"
-            app:tint="?attr/iconTint"
+            app:tint="?attr/colorSecondary"
             android:src="@drawable/separator_dot" />
 
         <TextView
@@ -61,6 +61,6 @@
         android:layout_gravity="end|center_vertical"
         android:layout_marginEnd="12dp"
         android:src="@drawable/ic_arrow_forward"
-        app:tint="?attr/iconTint" />
+        app:tint="?attr/colorSecondary" />
 
 </FrameLayout>
