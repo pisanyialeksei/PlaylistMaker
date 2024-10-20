@@ -1,4 +1,4 @@
-package com.study.playlistmaker.search
+package com.study.playlistmaker
 
 import android.content.Context
 import android.os.Bundle
@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.study.playlistmaker.R
-import com.study.playlistmaker.Track
+import com.study.playlistmaker.track.Track
+import com.study.playlistmaker.track.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
 
@@ -49,7 +49,7 @@ class SearchActivity : AppCompatActivity() {
 
         searchEditText.addTextChangedListener(textWatcher)
 
-        val trackList = arrayListOf(
+        val trackList = listOf(
             Track(
                 trackName = "Smells Like Teen Spirit",
                 artistName = "Nirvana",
@@ -83,8 +83,8 @@ class SearchActivity : AppCompatActivity() {
         )
 
         val recyclerView = findViewById<RecyclerView>(R.id.search_recycler_view)
-        val searchAdapter = SearchAdapter(trackList)
-        recyclerView.adapter = searchAdapter
+        val trackAdapter = TrackAdapter(trackList)
+        recyclerView.adapter = trackAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

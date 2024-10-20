@@ -1,4 +1,4 @@
-package com.study.playlistmaker.search
+package com.study.playlistmaker.track
 
 import android.content.Context
 import android.util.TypedValue
@@ -10,10 +10,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.study.playlistmaker.R
-import com.study.playlistmaker.Track
 
 
-class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val itemArtwork: ImageView = itemView.findViewById(R.id.search_item_artwork)
     private val itemName: TextView = itemView.findViewById(R.id.search_item_name)
@@ -33,9 +32,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemArtist.text = model.artistName
         itemDuration.text = model.trackTime
 
-        itemName.requestLayout()
         itemArtist.requestLayout()
-        itemDuration.requestLayout()
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

@@ -1,4 +1,4 @@
-package com.study.playlistmaker
+package com.study.playlistmaker.track
 
 data class Track(
     val trackName: String,
