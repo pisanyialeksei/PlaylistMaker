@@ -7,10 +7,12 @@
     <dimen name="toolbar_title_padding_top">10dp</dimen>
     <dimen name="toolbar_title_padding_bottom">12dp</dimen>
     <dimen name="main_text_size">22sp</dimen>
-    <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="regular_text_size">16sp</dimen>
     <dimen name="main_button_height">0dp</dimen>
     <dimen name="main_button_horizontal_margin">16dp</dimen>
     <dimen name="main_button_corner_radius">16dp</dimen>
     <dimen name="main_button_icon_padding">8dp</dimen>
     <dimen name="settings_button_height">61dp</dimen>
+    <dimen name="search_item_subtitle_text_size">11sp</dimen>
+    <dimen name="search_item_subtitle_margin_top">34dp</dimen>
 </resources>
