@@ -10,4 +10,7 @@
     <string name="user_agreement">User agreement</string>
     <string name="support_mail_subject">Message to the developers  of the Playlist Maker app</string>
     <string name="support_mail_body">Thanks to the developers for the cool app!</string>
+    <string name="network_error">Network error\n\nResult loading failed. Check your internet connection</string>
+    <string name="reload">Reload</string>
+    <string name="nothing_found">Nothing found</string>
 </resources>
