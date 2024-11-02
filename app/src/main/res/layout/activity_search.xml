@@ -50,7 +50,9 @@
                 style="@style/SearchInputHint"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:imeOptions="actionDone"
+                android:singleLine="true" />
 
             <ImageView
                 android:id="@+id/search_edit_text_clear"
@@ -69,7 +71,69 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
+        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+    <LinearLayout
+        android:id="@+id/empty_search_result_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/empty_search_result_img" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/nothing_found"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/search_error_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_network_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_network_error_img" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:gravity="center"
+            android:text="@string/network_error"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/search_error_text_size" />
+
+        <Button
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorOnPrimary"
+            android:letterSpacing="@dimen/button_letter_spacing"
+            android:text="@string/reload"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="14sp"
+            app:cornerRadius="54dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
