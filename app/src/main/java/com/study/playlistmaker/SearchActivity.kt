@@ -14,26 +14,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.study.playlistmaker.data.ItunesSearchApiService
+import com.study.playlistmaker.data.RetrofitClient
 import com.study.playlistmaker.data.SearchResponse
 import com.study.playlistmaker.track.Track
 import com.study.playlistmaker.track.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
     private lateinit var lastQuery: String
-
-    private val itunesSearchApiService = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(ItunesSearchApiService::class.java)
 
     private val trackList = mutableListOf<Track>()
     private val trackAdapter = TrackAdapter(trackList)
@@ -112,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearchRequest(searchQuery: String) {
-        itunesSearchApiService.search(searchQuery).enqueue(
+        RetrofitClient.itunesSearchApiService.search(searchQuery).enqueue(
             object : Callback<SearchResponse> {
                 override fun onResponse(
                     call: Call<SearchResponse>,
