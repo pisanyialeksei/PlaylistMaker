@@ -21,13 +21,16 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
         style="@style/SettingsButton"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_button_height"
         android:paddingStart="16dp"
         android:paddingEnd="18dp"
-        android:text="@string/dark_theme" />
+        android:text="@string/dark_theme"
+        app:thumbTint="@color/thumb_tint_selector"
+        app:trackTint="@color/track_tint_selector" />
 
     <Button
         android:id="@+id/share"
