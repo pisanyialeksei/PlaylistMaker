@@ -27,16 +27,19 @@ import retrofit2.Response
 class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
-    private lateinit var lastQuery: String
+    private var lastQuery: String = ""
 
     private val searchList = mutableListOf<Track>()
-    private val searchAdapter = TrackAdapter(searchList)
-    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var historyList: MutableList<Track>
+
     private lateinit var searchHistoryManager: SearchHistoryManager
+    private lateinit var searchAdapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
 
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var emptyResultError: LinearLayout
     private lateinit var networkError: LinearLayout
+
     private lateinit var historyView: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
 
@@ -46,9 +49,9 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistoryManager = SearchHistoryManager(sharedPreferences)
-        searchAdapter.setSearchHistoryManager(searchHistoryManager)
-        historyAdapter = TrackAdapter(searchHistoryManager.currentHistory)
-        historyAdapter.setSearchHistoryManager(searchHistoryManager)
+        searchAdapter = TrackAdapter(searchList, searchHistoryManager)
+        historyList = searchHistoryManager.currentHistory
+        historyAdapter = TrackAdapter(historyList, searchHistoryManager)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
@@ -63,7 +66,26 @@ class SearchActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        val textWatcher = object : TextWatcher {
+        searchRecyclerView = findViewById(R.id.search_recycler_view)
+        searchRecyclerView.adapter = searchAdapter
+
+        historyView = findViewById(R.id.search_history)
+        historyRecyclerView = findViewById(R.id.search_history_recycler_view)
+        historyRecyclerView.adapter = historyAdapter
+
+        val clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
+        clearHistoryButton.setOnClickListener {
+            searchHistoryManager.clearHistory()
+            historyList.clear()
+            historyAdapter.notifyItemRangeRemoved(0, 10)
+            historyView.isVisible = false
+        }
+
+        emptyResultError = findViewById(R.id.empty_search_result_error)
+        networkError = findViewById(R.id.search_network_error)
+        val networkErrorRefreshButton = findViewById<Button>(R.id.refresh_button)
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -77,7 +99,11 @@ class SearchActivity : AppCompatActivity() {
                     emptyResultError.isVisible = false
                     networkError.isVisible = false
                     if (searchEditText.hasFocus() && searchHistoryManager.currentHistory.isNotEmpty()) {
-                        historyAdapter.updateData(searchHistoryManager.currentHistory)
+                        historyList.apply {
+                            clear()
+                            addAll(searchHistoryManager.currentHistory)
+                        }
+                        historyAdapter.notifyItemRangeChanged(0, 10)
                         searchRecyclerView.isVisible = false
                         historyView.isVisible = true
                     } else {
@@ -88,29 +114,10 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {}
-        }
+        })
 
-        searchRecyclerView = findViewById(R.id.search_recycler_view)
-        searchRecyclerView.adapter = searchAdapter
-
-        historyView = findViewById(R.id.search_history)
-        historyRecyclerView = findViewById(R.id.search_history_recycler_view)
-        historyRecyclerView.adapter = historyAdapter
-        val clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
-        clearHistoryButton.setOnClickListener {
-            searchHistoryManager.clearHistory()
-            historyAdapter.notifyItemRangeRemoved(0, historyAdapter.itemCount)
-            historyView.isVisible = false
-        }
-
-        emptyResultError = findViewById(R.id.empty_search_result_error)
-        networkError = findViewById(R.id.search_network_error)
-        val networkErrorRefreshButton = findViewById<Button>(R.id.refresh_button)
-
-        searchEditText.addTextChangedListener(textWatcher)
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchText.isEmpty() && searchHistoryManager.currentHistory.isNotEmpty()) {
-                historyAdapter.notifyItemRangeChanged(0, 10)
                 searchRecyclerView.isVisible = false
                 historyView.isVisible = true
                 emptyResultError.isVisible = false
