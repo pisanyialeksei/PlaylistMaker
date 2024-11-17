@@ -1,4 +1,4 @@
-package com.study.playlistmaker
+package com.study.playlistmaker.search
 
 import android.content.Context
 import android.os.Bundle
@@ -14,8 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.study.playlistmaker.data.RetrofitClient
-import com.study.playlistmaker.data.SearchResponse
+import com.study.playlistmaker.R
+import com.study.playlistmaker.SHARED_PREFERENCES
+import com.study.playlistmaker.search.data.RetrofitClient
+import com.study.playlistmaker.search.data.SearchResponse
 import com.study.playlistmaker.track.Track
 import com.study.playlistmaker.track.TrackAdapter
 import retrofit2.Call
@@ -27,16 +29,26 @@ class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
     private lateinit var lastQuery: String
 
-    private val trackList = mutableListOf<Track>()
-    private val trackAdapter = TrackAdapter(trackList)
+    private val searchList = mutableListOf<Track>()
+    private val searchAdapter = TrackAdapter(searchList)
+    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var searchHistoryManager: SearchHistoryManager
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var searchRecyclerView: RecyclerView
     private lateinit var emptyResultError: LinearLayout
     private lateinit var networkError: LinearLayout
+    private lateinit var historyView: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+        searchHistoryManager = SearchHistoryManager(sharedPreferences)
+        searchAdapter.setSearchHistoryManager(searchHistoryManager)
+        historyAdapter = TrackAdapter(searchHistoryManager.currentHistory)
+        historyAdapter.setSearchHistoryManager(searchHistoryManager)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
@@ -59,26 +71,57 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
                 if (searchText.isEmpty()) {
-                    val itemCount = trackList.size
-                    trackList.clear()
-                    trackAdapter.notifyItemRangeRemoved(0, itemCount)
-                    recyclerView.isVisible = true
+                    val itemCount = searchList.size
+                    searchList.clear()
+                    searchAdapter.notifyItemRangeRemoved(0, itemCount)
                     emptyResultError.isVisible = false
                     networkError.isVisible = false
+                    if (searchEditText.hasFocus() && searchHistoryManager.currentHistory.isNotEmpty()) {
+                        historyAdapter.updateData(searchHistoryManager.currentHistory)
+                        searchRecyclerView.isVisible = false
+                        historyView.isVisible = true
+                    } else {
+                        searchRecyclerView.isVisible = true
+                    }
                 }
+
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        recyclerView = findViewById(R.id.search_recycler_view)
-        recyclerView.adapter = trackAdapter
+        searchRecyclerView = findViewById(R.id.search_recycler_view)
+        searchRecyclerView.adapter = searchAdapter
+
+        historyView = findViewById(R.id.search_history)
+        historyRecyclerView = findViewById(R.id.search_history_recycler_view)
+        historyRecyclerView.adapter = historyAdapter
+        val clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
+        clearHistoryButton.setOnClickListener {
+            searchHistoryManager.clearHistory()
+            historyAdapter.notifyItemRangeRemoved(0, historyAdapter.itemCount)
+            historyView.isVisible = false
+        }
 
         emptyResultError = findViewById(R.id.empty_search_result_error)
         networkError = findViewById(R.id.search_network_error)
         val networkErrorRefreshButton = findViewById<Button>(R.id.refresh_button)
 
         searchEditText.addTextChangedListener(textWatcher)
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && searchText.isEmpty() && searchHistoryManager.currentHistory.isNotEmpty()) {
+                historyAdapter.notifyItemRangeChanged(0, 10)
+                searchRecyclerView.isVisible = false
+                historyView.isVisible = true
+                emptyResultError.isVisible = false
+                networkError.isVisible = false
+            } else {
+                searchRecyclerView.isVisible = true
+                historyView.isVisible = false
+                emptyResultError.isVisible = false
+                networkError.isVisible = false
+            }
+        }
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
                 performSearchRequest(searchText)
@@ -111,30 +154,34 @@ class SearchActivity : AppCompatActivity() {
                     response: Response<SearchResponse>
                 ) {
                     if (response.code() == 200) {
-                        trackList.clear()
+                        searchList.clear()
                         val searchResults = response.body()?.results
 
                         if (!searchResults.isNullOrEmpty()) {
-                            trackList.addAll(searchResults)
-                            trackAdapter.notifyDataSetChanged()
-                            recyclerView.isVisible = true
+                            searchList.addAll(searchResults)
+                            searchAdapter.notifyDataSetChanged()
+                            searchRecyclerView.isVisible = true
+                            historyView.isVisible = false
                             emptyResultError.isVisible = false
                             networkError.isVisible = false
                         }
-                        if (trackList.isEmpty()) {
-                            recyclerView.isVisible = false
+                        if (searchList.isEmpty()) {
+                            searchRecyclerView.isVisible = false
+                            historyView.isVisible = false
                             emptyResultError.isVisible = true
                             networkError.isVisible = false
                         }
                     } else {
-                        recyclerView.isVisible = false
+                        searchRecyclerView.isVisible = false
+                        historyView.isVisible = false
                         emptyResultError.isVisible = false
                         networkError.isVisible = true
                     }
                 }
 
                 override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                    recyclerView.isVisible = false
+                    searchRecyclerView.isVisible = false
+                    historyView.isVisible = false
                     emptyResultError.isVisible = false
                     networkError.isVisible = true
                 }

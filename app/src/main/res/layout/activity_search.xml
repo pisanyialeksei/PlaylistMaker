@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SearchActivity">
+    tools:context=".search.SearchActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -75,6 +75,40 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <LinearLayout
+        android:id="@+id/search_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="42dp"
+            android:text="@string/search_history_title"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/search_secondary_view_text_size" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_history_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <Button
+            android:id="@+id/clear_history_button"
+            style="@style/SearchSecondaryViewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/clear_history_button" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/empty_search_result_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -93,7 +127,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/nothing_found"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/search_error_text_size" />
+            android:textSize="@dimen/search_secondary_view_text_size" />
 
     </LinearLayout>
 
@@ -120,19 +154,14 @@
             android:gravity="center"
             android:text="@string/network_error"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/search_error_text_size" />
+            android:textSize="@dimen/search_secondary_view_text_size" />
 
         <Button
             android:id="@+id/refresh_button"
+            style="@style/SearchSecondaryViewButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="?attr/colorOnPrimary"
-            android:letterSpacing="@dimen/button_letter_spacing"
-            android:text="@string/reload"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="14sp"
-            app:cornerRadius="54dp" />
+            android:text="@string/reload" />
 
     </LinearLayout>
 
