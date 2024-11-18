@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.study.playlistmaker.R
+import com.study.playlistmaker.search.SearchHistoryManager
 
 class TrackAdapter(
-    private val searchResults: List<Track>
+    private val trackList: MutableList<Track>,
+    private val searchHistoryManager: SearchHistoryManager,
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -15,10 +17,14 @@ class TrackAdapter(
     }
 
     override fun getItemCount(): Int {
-        return searchResults.size
+        return trackList.size
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(searchResults[position])
+        val item = trackList[position]
+        holder.bind(item)
+        holder.itemView.setOnClickListener {
+            searchHistoryManager.addTrackToHistory(item)
+        }
     }
 }

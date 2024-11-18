@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="search_input_background">@color/white</color>
+    <color name="yp_light_gray">@color/white</color>
 </resources>
