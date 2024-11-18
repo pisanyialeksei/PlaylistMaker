@@ -10,7 +10,7 @@
         android:layout_height="45dp"
         android:layout_gravity="start|center_vertical"
         android:layout_marginStart="13dp"
-        android:src="@drawable/track_artwork_placeholder" />
+        android:src="@drawable/track_artwork_list_placeholder" />
 
     <TextView
         android:id="@+id/search_item_name"
@@ -43,8 +43,8 @@
             android:layout_height="13dp"
             android:layout_marginTop="@dimen/search_item_subtitle_margin_top"
             android:scaleType="center"
-            app:tint="?attr/colorSecondary"
-            android:src="@drawable/separator_dot" />
+            android:src="@drawable/separator_dot"
+            app:tint="?attr/colorSecondary" />
 
         <TextView
             android:id="@+id/search_item_duration"
