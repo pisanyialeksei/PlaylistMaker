@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.edit
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -25,9 +26,9 @@ class SettingsActivity : AppCompatActivity() {
             appContext.switchTheme(isChecked)
 
             val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-            sharedPreferences.edit()
-                .putBoolean(DARK_THEME_KEY, isChecked)
-                .apply()
+            sharedPreferences.edit {
+                putBoolean(DARK_THEME_KEY, isChecked)
+            }
         }
 
         val shareButton = findViewById<Button>(R.id.share)

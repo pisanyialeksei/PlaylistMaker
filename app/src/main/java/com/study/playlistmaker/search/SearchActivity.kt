@@ -2,8 +2,6 @@ package com.study.playlistmaker.search
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -13,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.study.playlistmaker.R
 import com.study.playlistmaker.SHARED_PREFERENCES
@@ -85,13 +84,10 @@ class SearchActivity : AppCompatActivity() {
         networkError = findViewById(R.id.search_network_error)
         val networkErrorRefreshButton = findViewById<Button>(R.id.refresh_button)
 
-        searchEditText.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.isVisible = !s.isNullOrEmpty()
-                searchText = s.toString()
+        searchEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                clearButton.isVisible = !text.isNullOrEmpty()
+                searchText = text.toString()
                 if (searchText.isEmpty()) {
                     val itemCount = searchList.size
                     searchList.clear()
@@ -110,12 +106,8 @@ class SearchActivity : AppCompatActivity() {
                         searchRecyclerView.isVisible = true
                     }
                 }
-
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
+        )
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchText.isEmpty() && searchHistoryManager.currentHistory.isNotEmpty()) {
                 searchRecyclerView.isVisible = false

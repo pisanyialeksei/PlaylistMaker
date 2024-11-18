@@ -1,6 +1,7 @@
 package com.study.playlistmaker.search
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.study.playlistmaker.track.Track
@@ -25,9 +26,9 @@ class SearchHistoryManager(
     }
 
     fun clearHistory() {
-        sharedPreferences.edit()
-            .remove(historyKey)
-            .apply()
+        sharedPreferences.edit {
+            remove(historyKey)
+        }
     }
 
     private fun getTracksFromPreferences(): MutableList<Track> {
@@ -38,8 +39,8 @@ class SearchHistoryManager(
 
     private fun putTracksToPreferences(tracks: MutableList<Track>) {
         val json = Gson().toJson(tracks)
-        sharedPreferences.edit()
-            .putString(historyKey, json)
-            .apply()
+        sharedPreferences.edit {
+            putString(historyKey, json)
+        }
     }
 }
