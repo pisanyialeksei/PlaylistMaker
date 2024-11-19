@@ -11,6 +11,7 @@ class SearchHistoryManager(
 ) {
 
     private val historyKey = "SEARCH_HISTORY"
+    private val gson = Gson()
 
     val currentHistory: MutableList<Track>
         get() = getTracksFromPreferences()
@@ -34,11 +35,11 @@ class SearchHistoryManager(
     private fun getTracksFromPreferences(): MutableList<Track> {
         val json = sharedPreferences.getString(historyKey, null) ?: return mutableListOf()
         val type = object : TypeToken<MutableList<Track>>() {}.type
-        return Gson().fromJson(json, type)
+        return gson.fromJson(json, type)
     }
 
     private fun putTracksToPreferences(tracks: MutableList<Track>) {
-        val json = Gson().toJson(tracks)
+        val json = gson.toJson(tracks)
         sharedPreferences.edit {
             putString(historyKey, json)
         }
