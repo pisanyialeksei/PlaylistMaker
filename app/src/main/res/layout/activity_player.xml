@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -37,39 +38,27 @@
 
     <TextView
         android:id="@+id/name"
+        style="@style/PlayerNameAndArtist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="Track name"
-        android:textColor="?attr/colorOnPrimary"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/cover" />
+        app:layout_constraintTop_toBottomOf="@id/cover"
+        tools:text="Track name" />
 
     <TextView
         android:id="@+id/artist"
+        style="@style/PlayerNameAndArtist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="Artist name"
-        android:textColor="?attr/colorOnPrimary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/name" />
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:text="Artist name" />
 
     <ImageButton
         android:id="@+id/add_to_playlist_button"
@@ -123,123 +112,113 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp"
         android:layout_marginTop="4dp"
-        android:text="02:30"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/play_button" />
+        app:layout_constraintTop_toBottomOf="@id/play_button"
+        tools:text="02:30" />
 
     <TextView
         android:id="@+id/durationTitle"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_marginTop="30dp"
-        android:gravity="center"
         android:text="@string/duration"
         android:textColor="@color/yp_text_gray"
-        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/duration" />
 
     <TextView
         android:id="@+id/durationValue"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:text="02:40"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/duration" />
+        app:layout_constraintTop_toBottomOf="@id/duration"
+        tools:text="02:40" />
 
     <TextView
         android:id="@+id/albumTitle"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
         android:text="@string/album"
         android:textColor="@color/yp_text_gray"
-        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/durationTitle" />
 
     <TextView
         android:id="@+id/albumValue"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
-        android:text="Имя"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/durationValue" />
+        app:layout_constraintTop_toBottomOf="@id/durationValue"
+        tools:text="Some album" />
 
     <TextView
         android:id="@+id/yearTitle"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
         android:text="@string/year"
         android:textColor="@color/yp_text_gray"
-        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/albumTitle" />
 
     <TextView
         android:id="@+id/yearValue"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
-        android:text="2007"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/albumValue" />
+        app:layout_constraintTop_toBottomOf="@id/albumValue"
+        tools:text="2007" />
 
     <TextView
         android:id="@+id/genreTitle"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
         android:text="@string/genre"
         android:textColor="@color/yp_text_gray"
-        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/yearTitle" />
 
     <TextView
         android:id="@+id/genreValue"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
-        android:text="Роцк"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/yearValue" />
+        app:layout_constraintTop_toBottomOf="@id/yearValue"
+        tools:text="Rock" />
 
     <TextView
         android:id="@+id/countryTitle"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
         android:text="@string/country"
         android:textColor="@color/yp_text_gray"
-        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/genreTitle" />
 
     <TextView
         android:id="@+id/countryValue"
+        style="@style/PlayerInfo"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:gravity="center"
-        android:text="Сентябрь"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/genreValue" />
+        app:layout_constraintTop_toBottomOf="@id/genreValue"
+        tools:text="USA" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,4 +67,19 @@
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">54dp</item>
     </style>
+
+    <style name="PlayerNameAndArtist">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="PlayerInfo">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">13sp</item>
+    </style>
 </resources>
