@@ -1,7 +1,6 @@
 package com.study.playlistmaker
 
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -30,7 +29,7 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.track_artwork_player_placeholder)
             .transform(CenterCrop())
             .transform(RoundedCorners(2f.dpToPx(this)))
-            .into(findViewById<ImageView>(R.id.cover))
+            .into(findViewById(R.id.cover))
 
 
         findViewById<TextView>(R.id.name).apply {
@@ -41,6 +40,7 @@ class PlayerActivity : AppCompatActivity() {
             text = currentTrack.artistName
             isSelected = true
         }
+        findViewById<TextView>(R.id.currentDuration).text = "00:30" // For debug
         findViewById<TextView>(R.id.durationValue).text = formatMsToDuration(currentTrack.trackTimeMillis)
         val album = findViewById<TextView>(R.id.albumValue)
         if (currentTrack.collectionName == null) {
