@@ -40,17 +40,17 @@ class PlayerActivity : AppCompatActivity() {
             text = currentTrack.artistName
             isSelected = true
         }
-        findViewById<TextView>(R.id.currentDuration).text = "00:30" // For debug
-        findViewById<TextView>(R.id.durationValue).text = formatMsToDuration(currentTrack.trackTimeMillis)
-        val album = findViewById<TextView>(R.id.albumValue)
+        findViewById<TextView>(R.id.current_duration).text = "00:30" // For debug
+        findViewById<TextView>(R.id.duration_value).text = formatMsToDuration(currentTrack.trackTimeMillis)
+        val album = findViewById<TextView>(R.id.album_value)
         if (currentTrack.collectionName == null) {
-            findViewById<TextView>(R.id.albumTitle).isVisible = false
+            findViewById<TextView>(R.id.album_title).isVisible = false
             album.isVisible = false
         } else {
             album.text = currentTrack.collectionName
         }
-        findViewById<TextView>(R.id.yearValue).text = currentTrack.releaseDate.substringBefore('-')
-        findViewById<TextView>(R.id.genreValue).text = currentTrack.primaryGenreName
-        findViewById<TextView>(R.id.countryValue).text = currentTrack.country
+        findViewById<TextView>(R.id.year_value).text = currentTrack.releaseDate.substringBefore('-')
+        findViewById<TextView>(R.id.genre_value).text = currentTrack.primaryGenreName
+        findViewById<TextView>(R.id.country_value).text = currentTrack.country
     }
 }
