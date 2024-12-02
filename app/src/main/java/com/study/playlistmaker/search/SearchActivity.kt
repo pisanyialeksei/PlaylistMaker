@@ -48,9 +48,9 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistoryManager = SearchHistoryManager(sharedPreferences)
-        searchAdapter = TrackAdapter(searchList, searchHistoryManager)
+        searchAdapter = TrackAdapter(searchList, searchHistoryManager, this)
         historyList = searchHistoryManager.currentHistory
-        historyAdapter = TrackAdapter(historyList, searchHistoryManager)
+        historyAdapter = TrackAdapter(historyList, searchHistoryManager, this)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {

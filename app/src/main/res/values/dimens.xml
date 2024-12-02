@@ -16,4 +16,5 @@
     <dimen name="search_item_subtitle_text_size">11sp</dimen>
     <dimen name="search_item_subtitle_margin_top">34dp</dimen>
     <dimen name="search_secondary_view_text_size">19sp</dimen>
+    <dimen name="player_info_item_height">32sp</dimen>
 </resources>
