@@ -2,12 +2,15 @@ package com.study.playlistmaker.search
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
@@ -38,9 +41,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var emptyResultError: LinearLayout
     private lateinit var networkError: LinearLayout
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var historyView: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearchRequest(searchText) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +72,8 @@ class SearchActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
+        progressBar = findViewById(R.id.progressBar)
+
         searchRecyclerView = findViewById(R.id.search_recycler_view)
         searchRecyclerView.adapter = searchAdapter
 
@@ -88,7 +97,9 @@ class SearchActivity : AppCompatActivity() {
             onTextChanged = { text, _, _, _ ->
                 clearButton.isVisible = !text.isNullOrEmpty()
                 searchText = text.toString()
-                if (searchText.isEmpty()) {
+                if (searchText.isNotEmpty()) {
+                    searchDebounce()
+                } else {
                     val itemCount = searchList.size
                     searchList.clear()
                     searchAdapter.notifyItemRangeRemoved(0, itemCount)
@@ -123,7 +134,7 @@ class SearchActivity : AppCompatActivity() {
         }
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
-                performSearchRequest(searchText)
+                searchDebounce()
                 lastQuery = searchText
             }
             false
@@ -146,12 +157,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearchRequest(searchQuery: String) {
+        searchRecyclerView.isVisible = false
+        historyView.isVisible = false
+        emptyResultError.isVisible = false
+        networkError.isVisible = false
+        progressBar.isVisible = true
+
         RetrofitClient.itunesSearchApiService.search(searchQuery).enqueue(
             object : Callback<SearchResponse> {
                 override fun onResponse(
                     call: Call<SearchResponse>,
                     response: Response<SearchResponse>
                 ) {
+                    progressBar.isVisible = false
                     if (response.code() == 200) {
                         searchList.clear()
                         val searchResults = response.body()?.results
@@ -159,36 +177,34 @@ class SearchActivity : AppCompatActivity() {
                         if (!searchResults.isNullOrEmpty()) {
                             searchList.addAll(searchResults)
                             searchAdapter.notifyDataSetChanged()
+                            progressBar.isVisible = false
                             searchRecyclerView.isVisible = true
-                            historyView.isVisible = false
-                            emptyResultError.isVisible = false
-                            networkError.isVisible = false
                         }
                         if (searchList.isEmpty()) {
-                            searchRecyclerView.isVisible = false
-                            historyView.isVisible = false
+                            progressBar.isVisible = false
                             emptyResultError.isVisible = true
-                            networkError.isVisible = false
                         }
                     } else {
-                        searchRecyclerView.isVisible = false
-                        historyView.isVisible = false
-                        emptyResultError.isVisible = false
+                        progressBar.isVisible = false
                         networkError.isVisible = true
                     }
                 }
 
                 override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                    searchRecyclerView.isVisible = false
-                    historyView.isVisible = false
-                    emptyResultError.isVisible = false
+                    progressBar.isVisible = false
                     networkError.isVisible = true
                 }
             }
         )
     }
 
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     companion object {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
+        private const val SEARCH_DEBOUNCE_DELAY = 2_000L
     }
 }
