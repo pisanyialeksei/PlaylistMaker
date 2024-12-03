@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyView: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearchRequest(searchText) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +72,7 @@ class SearchActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        progressBar = findViewById(R.id.progressBar)
+        progressBar = findViewById(R.id.progress_bar)
 
         searchRecyclerView = findViewById(R.id.search_recycler_view)
         searchRecyclerView.adapter = searchAdapter
@@ -199,8 +199,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     companion object {
