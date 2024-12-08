@@ -1,6 +1,7 @@
 package com.study.playlistmaker.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,11 +17,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
+import com.study.playlistmaker.PlayerActivity
 import com.study.playlistmaker.R
 import com.study.playlistmaker.SHARED_PREFERENCES
+import com.study.playlistmaker.gson
 import com.study.playlistmaker.search.data.RetrofitClient
 import com.study.playlistmaker.search.data.SearchResponse
 import com.study.playlistmaker.track.Track
+import com.study.playlistmaker.track.Track.Companion.TRACK_INTENT_KEY
 import com.study.playlistmaker.track.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,15 +53,23 @@ class SearchActivity : AppCompatActivity() {
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearchRequest(searchText) }
 
+    private var isClickOnTrackAllowed = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistoryManager = SearchHistoryManager(sharedPreferences)
-        searchAdapter = TrackAdapter(searchList, searchHistoryManager, this)
+        searchAdapter = TrackAdapter(
+            trackList = searchList,
+            clickListener = { track -> openPlayerWithTrack(track) }
+        )
         historyList = searchHistoryManager.currentHistory
-        historyAdapter = TrackAdapter(historyList, searchHistoryManager, this)
+        historyAdapter = TrackAdapter(
+            trackList = historyList,
+            clickListener = { track -> openPlayerWithTrack(track) }
+        )
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
@@ -208,8 +220,26 @@ class SearchActivity : AppCompatActivity() {
         mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
+    private fun debounceTrackClick(): Boolean {
+        val current = isClickOnTrackAllowed
+        if (isClickOnTrackAllowed) {
+            isClickOnTrackAllowed = false
+            mainThreadHandler.postDelayed({ isClickOnTrackAllowed = true }, TRACK_CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun openPlayerWithTrack(track: Track) {
+        if (debounceTrackClick()) {
+            searchHistoryManager.addTrackToHistory(track)
+            val itemJson = gson.toJson(track)
+            startActivity(Intent(this, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson))
+        }
+    }
+
     companion object {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
         private const val SEARCH_DEBOUNCE_DELAY = 2_000L
+        private const val TRACK_CLICK_DEBOUNCE_DELAY = 1_000L
     }
 }
