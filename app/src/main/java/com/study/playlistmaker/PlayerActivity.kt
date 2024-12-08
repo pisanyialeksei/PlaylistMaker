@@ -30,7 +30,7 @@ class PlayerActivity : AppCompatActivity() {
         override fun run() {
             if (playerState == STATE_PLAYING) {
                 currentPosition.text = formatMsToDuration(mediaPlayer.currentPosition.toLong())
-                mainThreadHandler.postDelayed(this, 500L)
+                mainThreadHandler.postDelayed(this, CURRENT_POSITION_UPDATE_DELAY)
             }
         }
     }
@@ -143,5 +143,6 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+        private const val CURRENT_POSITION_UPDATE_DELAY = 500L
     }
 }
