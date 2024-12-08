@@ -2,8 +2,8 @@ package com.study.playlistmaker.search
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.study.playlistmaker.gson
 import com.study.playlistmaker.track.Track
 
 class SearchHistoryManager(
@@ -11,7 +11,6 @@ class SearchHistoryManager(
 ) {
 
     private val historyKey = "SEARCH_HISTORY"
-    private val gson = Gson()
 
     val currentHistory: MutableList<Track>
         get() = getTracksFromPreferences()

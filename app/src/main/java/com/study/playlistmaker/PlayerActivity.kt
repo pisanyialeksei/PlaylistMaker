@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
 import com.study.playlistmaker.track.Track
 import com.study.playlistmaker.track.Track.Companion.TRACK_INTENT_KEY
 
@@ -39,7 +38,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        val currentTrack = Gson().fromJson(intent.getStringExtra(TRACK_INTENT_KEY), Track::class.java)
+        val currentTrack = gson.fromJson(intent.getStringExtra(TRACK_INTENT_KEY), Track::class.java)
         previewUrl = currentTrack.previewUrl
 
         findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener {

@@ -7,9 +7,9 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.study.playlistmaker.PlayerActivity
 import com.study.playlistmaker.R
+import com.study.playlistmaker.gson
 import com.study.playlistmaker.search.SearchHistoryManager
 import com.study.playlistmaker.track.Track.Companion.TRACK_INTENT_KEY
 
@@ -37,7 +37,7 @@ class TrackAdapter(
         holder.itemView.setOnClickListener {
             if (clickDebounce()) {
                 searchHistoryManager.addTrackToHistory(item)
-                val itemJson = Gson().toJson(item)
+                val itemJson = gson.toJson(item)
                 context.startActivity(
                     Intent(context, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson)
                 )
