@@ -1,23 +1,30 @@
 package com.study.playlistmaker.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
+import com.study.playlistmaker.PlayerActivity
 import com.study.playlistmaker.R
 import com.study.playlistmaker.SHARED_PREFERENCES
+import com.study.playlistmaker.gson
 import com.study.playlistmaker.search.data.RetrofitClient
 import com.study.playlistmaker.search.data.SearchResponse
 import com.study.playlistmaker.track.Track
+import com.study.playlistmaker.track.Track.Companion.TRACK_INTENT_KEY
 import com.study.playlistmaker.track.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,9 +45,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var emptyResultError: LinearLayout
     private lateinit var networkError: LinearLayout
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var historyView: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
+
+    private val mainThreadHandler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearchRequest(searchText) }
+
+    private var isClickOnTrackAllowed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +61,15 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistoryManager = SearchHistoryManager(sharedPreferences)
-        searchAdapter = TrackAdapter(searchList, searchHistoryManager, this)
+        searchAdapter = TrackAdapter(
+            trackList = searchList,
+            clickListener = { track -> openPlayerWithTrack(track) }
+        )
         historyList = searchHistoryManager.currentHistory
-        historyAdapter = TrackAdapter(historyList, searchHistoryManager, this)
+        historyAdapter = TrackAdapter(
+            trackList = historyList,
+            clickListener = { track -> openPlayerWithTrack(track) }
+        )
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
@@ -64,6 +83,8 @@ class SearchActivity : AppCompatActivity() {
             val imm = searchEditText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
+
+        progressBar = findViewById(R.id.progress_bar)
 
         searchRecyclerView = findViewById(R.id.search_recycler_view)
         searchRecyclerView.adapter = searchAdapter
@@ -88,7 +109,9 @@ class SearchActivity : AppCompatActivity() {
             onTextChanged = { text, _, _, _ ->
                 clearButton.isVisible = !text.isNullOrEmpty()
                 searchText = text.toString()
-                if (searchText.isEmpty()) {
+                if (searchText.isNotEmpty()) {
+                    searchDebounce()
+                } else {
                     val itemCount = searchList.size
                     searchList.clear()
                     searchAdapter.notifyItemRangeRemoved(0, itemCount)
@@ -123,7 +146,7 @@ class SearchActivity : AppCompatActivity() {
         }
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
-                performSearchRequest(searchText)
+                searchDebounce()
                 lastQuery = searchText
             }
             false
@@ -131,6 +154,11 @@ class SearchActivity : AppCompatActivity() {
         networkErrorRefreshButton.setOnClickListener {
             performSearchRequest(lastQuery)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainThreadHandler.removeCallbacks(searchRunnable)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -146,12 +174,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearchRequest(searchQuery: String) {
+        searchRecyclerView.isVisible = false
+        historyView.isVisible = false
+        emptyResultError.isVisible = false
+        networkError.isVisible = false
+        progressBar.isVisible = true
+
         RetrofitClient.itunesSearchApiService.search(searchQuery).enqueue(
             object : Callback<SearchResponse> {
                 override fun onResponse(
                     call: Call<SearchResponse>,
                     response: Response<SearchResponse>
                 ) {
+                    progressBar.isVisible = false
                     if (response.code() == 200) {
                         searchList.clear()
                         val searchResults = response.body()?.results
@@ -159,36 +194,52 @@ class SearchActivity : AppCompatActivity() {
                         if (!searchResults.isNullOrEmpty()) {
                             searchList.addAll(searchResults)
                             searchAdapter.notifyDataSetChanged()
+                            progressBar.isVisible = false
                             searchRecyclerView.isVisible = true
-                            historyView.isVisible = false
-                            emptyResultError.isVisible = false
-                            networkError.isVisible = false
                         }
                         if (searchList.isEmpty()) {
-                            searchRecyclerView.isVisible = false
-                            historyView.isVisible = false
+                            progressBar.isVisible = false
                             emptyResultError.isVisible = true
-                            networkError.isVisible = false
                         }
                     } else {
-                        searchRecyclerView.isVisible = false
-                        historyView.isVisible = false
-                        emptyResultError.isVisible = false
+                        progressBar.isVisible = false
                         networkError.isVisible = true
                     }
                 }
 
                 override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                    searchRecyclerView.isVisible = false
-                    historyView.isVisible = false
-                    emptyResultError.isVisible = false
+                    progressBar.isVisible = false
                     networkError.isVisible = true
                 }
             }
         )
     }
 
+    private fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun debounceTrackClick(): Boolean {
+        val current = isClickOnTrackAllowed
+        if (isClickOnTrackAllowed) {
+            isClickOnTrackAllowed = false
+            mainThreadHandler.postDelayed({ isClickOnTrackAllowed = true }, TRACK_CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun openPlayerWithTrack(track: Track) {
+        if (debounceTrackClick()) {
+            searchHistoryManager.addTrackToHistory(track)
+            val itemJson = gson.toJson(track)
+            startActivity(Intent(this, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson))
+        }
+    }
+
     companion object {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
+        private const val SEARCH_DEBOUNCE_DELAY = 2_000L
+        private const val TRACK_CLICK_DEBOUNCE_DELAY = 1_000L
     }
 }
