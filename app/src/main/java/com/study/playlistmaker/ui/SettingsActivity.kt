@@ -1,4 +1,4 @@
-package com.study.playlistmaker
+package com.study.playlistmaker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.study.playlistmaker.App
+import com.study.playlistmaker.DARK_THEME_KEY
+import com.study.playlistmaker.R
+import com.study.playlistmaker.SHARED_PREFERENCES
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

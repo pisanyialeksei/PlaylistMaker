@@ -1,4 +1,4 @@
-package com.study.playlistmaker.track
+package com.study.playlistmaker.domain.models
 
 data class Track(
     val trackId: Long,

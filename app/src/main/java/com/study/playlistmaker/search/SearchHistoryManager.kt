@@ -3,8 +3,8 @@ package com.study.playlistmaker.search
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.reflect.TypeToken
+import com.study.playlistmaker.domain.models.Track
 import com.study.playlistmaker.gson
-import com.study.playlistmaker.track.Track
 
 class SearchHistoryManager(
     private val sharedPreferences: SharedPreferences,

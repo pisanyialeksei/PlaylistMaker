@@ -1,4 +1,4 @@
-package com.study.playlistmaker
+package com.study.playlistmaker.ui
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -12,8 +12,12 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.study.playlistmaker.track.Track
-import com.study.playlistmaker.track.Track.Companion.TRACK_INTENT_KEY
+import com.study.playlistmaker.R
+import com.study.playlistmaker.domain.models.Track
+import com.study.playlistmaker.domain.models.Track.Companion.TRACK_INTENT_KEY
+import com.study.playlistmaker.dpToPx
+import com.study.playlistmaker.formatMsToDuration
+import com.study.playlistmaker.gson
 
 class PlayerActivity : AppCompatActivity() {
 
