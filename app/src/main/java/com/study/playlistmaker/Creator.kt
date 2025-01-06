@@ -1,18 +1,28 @@
 package com.study.playlistmaker
 
-import com.study.playlistmaker.data.TracksRepositoryImpl
+import android.content.SharedPreferences
+import com.study.playlistmaker.data.HistoryRepositoryImpl
+import com.study.playlistmaker.data.SearchRepositoryImpl
 import com.study.playlistmaker.data.network.RetrofitNetworkClient
-import com.study.playlistmaker.domain.api.TracksInteractor
-import com.study.playlistmaker.domain.api.TracksRepository
-import com.study.playlistmaker.domain.impl.TracksInteractorImpl
+import com.study.playlistmaker.domain.api.history.HistoryInteractor
+import com.study.playlistmaker.domain.api.search.SearchInteractor
+import com.study.playlistmaker.domain.api.search.SearchRepository
+import com.study.playlistmaker.domain.impl.HistoryInteractorImpl
+import com.study.playlistmaker.domain.impl.SearchInteractorImpl
 
 object Creator {
 
-    private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient())
+    private fun getSearchRepository(): SearchRepository {
+        return SearchRepositoryImpl(RetrofitNetworkClient())
     }
 
-    fun provideTracksInteractor(): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository())
+    fun provideSearchInteractor(): SearchInteractor {
+        return SearchInteractorImpl(getSearchRepository())
+    }
+
+    fun provideHistoryInteractor(sharedPreferences: SharedPreferences): HistoryInteractor {
+        return HistoryInteractorImpl(
+            HistoryRepositoryImpl(sharedPreferences)
+        )
     }
 }

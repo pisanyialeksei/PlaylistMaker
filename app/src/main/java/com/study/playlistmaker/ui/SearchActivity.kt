@@ -20,45 +20,43 @@ import androidx.recyclerview.widget.RecyclerView
 import com.study.playlistmaker.Creator
 import com.study.playlistmaker.R
 import com.study.playlistmaker.SHARED_PREFERENCES
-import com.study.playlistmaker.domain.api.TracksInteractor
+import com.study.playlistmaker.domain.api.history.HistoryInteractor
+import com.study.playlistmaker.domain.api.search.SearchInteractor
 import com.study.playlistmaker.domain.models.Track
 import com.study.playlistmaker.domain.models.Track.Companion.TRACK_INTENT_KEY
 import com.study.playlistmaker.gson
 import com.study.playlistmaker.presentation.track.TrackAdapter
-import com.study.playlistmaker.search.SearchHistoryManager
 
-class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
+class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
     private var lastQuery: String = ""
 
     private val searchList = mutableListOf<Track>()
-    private lateinit var historyList: MutableList<Track>
 
     private lateinit var toolbar: Toolbar
     private lateinit var searchEditText: EditText
     private lateinit var searchEditTextClearButton: ImageView
+    private lateinit var historyView: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
-
-    private lateinit var searchHistoryManager: SearchHistoryManager
-    private lateinit var searchAdapter: TrackAdapter
-    private lateinit var historyAdapter: TrackAdapter
-
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var emptyResultError: LinearLayout
     private lateinit var networkError: LinearLayout
     private lateinit var networkErrorRefreshButton: Button
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var historyView: LinearLayout
-    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var searchAdapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
+
+    private lateinit var historyInteractorImpl: HistoryInteractor
+
+    private val tracksInteractorImpl = Creator.provideSearchInteractor()
 
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearchRequest(searchText) }
 
     private var isClickOnTrackAllowed = true
-
-    private val tracksInteractorImpl = Creator.provideTracksInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +65,18 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
         initializeViews()
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-        searchHistoryManager = SearchHistoryManager(sharedPreferences)
-        historyList = searchHistoryManager.currentHistory
+        historyInteractorImpl = Creator.provideHistoryInteractor(sharedPreferences)
 
         setupAdapters()
         setupListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (historyView.isVisible) {
+            searchEditText.requestFocus()
+            historyAdapter.notifyItemRangeChanged(0, 10)
+        }
     }
 
     override fun onDestroy() {
@@ -113,7 +118,7 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
         searchRecyclerView.adapter = searchAdapter
 
         historyAdapter = TrackAdapter(
-            trackList = historyList,
+            trackList = historyInteractorImpl.currentHistory,
             clickListener = { track -> openPlayerWithTrack(track) }
         )
         historyRecyclerView.adapter = historyAdapter
@@ -131,8 +136,7 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
         }
 
         clearHistoryButton.setOnClickListener {
-            searchHistoryManager.clearHistory()
-            historyList.clear()
+            historyInteractorImpl.clearHistory()
             historyAdapter.notifyItemRangeRemoved(0, 10)
             historyView.isVisible = false
         }
@@ -149,11 +153,7 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
                     searchAdapter.notifyItemRangeRemoved(0, itemCount)
                     emptyResultError.isVisible = false
                     networkError.isVisible = false
-                    if (searchEditText.hasFocus() && searchHistoryManager.currentHistory.isNotEmpty()) {
-                        historyList.apply {
-                            clear()
-                            addAll(searchHistoryManager.currentHistory)
-                        }
+                    if (searchEditText.hasFocus() && historyInteractorImpl.currentHistory.isNotEmpty()) {
                         historyAdapter.notifyItemRangeChanged(0, 10)
                         searchRecyclerView.isVisible = false
                         historyView.isVisible = true
@@ -164,7 +164,7 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
             }
         )
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchText.isEmpty() && searchHistoryManager.currentHistory.isNotEmpty()) {
+            if (hasFocus && searchText.isEmpty() && historyInteractorImpl.currentHistory.isNotEmpty()) {
                 searchRecyclerView.isVisible = false
                 historyView.isVisible = true
                 emptyResultError.isVisible = false
@@ -197,7 +197,29 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
 
         tracksInteractorImpl.searchTracks(
             query = searchQuery,
-            consumer = this
+            consumer = (object : SearchInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>?) {
+                    mainThreadHandler.post {
+                        progressBar.isVisible = false
+                        when {
+                            foundTracks == null -> {
+                                networkError.isVisible = true
+                            }
+
+                            foundTracks.isEmpty() -> {
+                                emptyResultError.isVisible = true
+                            }
+
+                            else -> {
+                                searchList.clear()
+                                searchList.addAll(foundTracks)
+                                searchAdapter.notifyDataSetChanged()
+                                searchRecyclerView.isVisible = true
+                            }
+                        }
+                    }
+                }
+            })
         )
     }
 
@@ -217,7 +239,8 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
 
     private fun openPlayerWithTrack(track: Track) {
         if (debounceTrackClick()) {
-            searchHistoryManager.addTrackToHistory(track)
+            historyInteractorImpl.addTrackToHistory(track)
+            historyAdapter.updateData(historyInteractorImpl.currentHistory)
             val itemJson = gson.toJson(track)
             startActivity(Intent(this, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson))
         }
@@ -227,27 +250,5 @@ class SearchActivity : AppCompatActivity(), TracksInteractor.TracksConsumer {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
         private const val SEARCH_DEBOUNCE_DELAY = 2_000L
         private const val TRACK_CLICK_DEBOUNCE_DELAY = 1_000L
-    }
-
-    override fun consume(foundTracks: List<Track>?) {
-        mainThreadHandler.post {
-            progressBar.isVisible = false
-            when {
-                foundTracks == null -> {
-                    networkError.isVisible = true
-                }
-
-                foundTracks.isEmpty() -> {
-                    emptyResultError.isVisible = true
-                }
-
-                else -> {
-                    searchList.clear()
-                    searchList.addAll(foundTracks)
-                    searchAdapter.notifyDataSetChanged()
-                    searchRecyclerView.isVisible = true
-                }
-            }
-        }
     }
 }

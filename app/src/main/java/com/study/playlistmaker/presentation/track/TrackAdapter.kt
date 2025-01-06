@@ -27,4 +27,10 @@ class TrackAdapter(
             clickListener.invoke(item)
         }
     }
+
+    fun updateData(newTrackList: List<Track>) {
+        trackList.clear()
+        trackList.addAll(newTrackList)
+        notifyItemRangeChanged(0, newTrackList.size)
+    }
 }

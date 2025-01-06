@@ -1,8 +1,8 @@
-package com.study.playlistmaker.domain.api
+package com.study.playlistmaker.domain.api.search
 
 import com.study.playlistmaker.domain.models.Track
 
-interface TracksInteractor {
+interface SearchInteractor {
 
     fun searchTracks(query: String, consumer: TracksConsumer)
 

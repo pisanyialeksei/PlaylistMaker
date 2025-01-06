@@ -1,46 +1,41 @@
-package com.study.playlistmaker.search
+package com.study.playlistmaker.data
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.reflect.TypeToken
+import com.study.playlistmaker.domain.api.history.HistoryRepository
 import com.study.playlistmaker.domain.models.Track
 import com.study.playlistmaker.gson
 
-class SearchHistoryManager(
-    private val sharedPreferences: SharedPreferences,
-) {
+class HistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) : HistoryRepository {
 
     private val historyKey = "SEARCH_HISTORY"
 
-    val currentHistory: MutableList<Track>
-        get() = getTracksFromPreferences()
+    override val currentHistory: MutableList<Track>
+        get() = getHistory()
 
-    fun addTrackToHistory(track: Track) {
+    override fun addTrackToHistory(track: Track) {
         val updatedHistory = currentHistory
         updatedHistory.removeAll { it.trackId == track.trackId }
         updatedHistory.add(0, track)
         if (updatedHistory.size > 10) {
             updatedHistory.removeAt(updatedHistory.size - 1)
         }
-        putTracksToPreferences(updatedHistory)
+        val json = gson.toJson(updatedHistory)
+        sharedPreferences.edit {
+            putString(historyKey, json)
+        }
     }
 
-    fun clearHistory() {
+    override fun clearHistory() {
         sharedPreferences.edit {
             remove(historyKey)
         }
     }
 
-    private fun getTracksFromPreferences(): MutableList<Track> {
+    private fun getHistory(): MutableList<Track> {
         val json = sharedPreferences.getString(historyKey, null) ?: return mutableListOf()
         val type = object : TypeToken<MutableList<Track>>() {}.type
         return gson.fromJson(json, type)
-    }
-
-    private fun putTracksToPreferences(tracks: MutableList<Track>) {
-        val json = gson.toJson(tracks)
-        sharedPreferences.edit {
-            putString(historyKey, json)
-        }
     }
 }
