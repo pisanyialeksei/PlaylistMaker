@@ -6,12 +6,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.edit
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.study.playlistmaker.App
-import com.study.playlistmaker.DARK_THEME_KEY
 import com.study.playlistmaker.R
-import com.study.playlistmaker.SHARED_PREFERENCES
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,14 +22,9 @@ class SettingsActivity : AppCompatActivity() {
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
         val appContext = applicationContext as App
-        themeSwitcher.isChecked = appContext.isDarkThemeEnabled
+        themeSwitcher.isChecked = appContext.themeInteractor.isDarkThemeEnabled()
         themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             appContext.switchTheme(isChecked)
-
-            val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-            sharedPreferences.edit {
-                putBoolean(DARK_THEME_KEY, isChecked)
-            }
         }
 
         val shareButton = findViewById<Button>(R.id.share)

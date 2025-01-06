@@ -19,7 +19,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.study.playlistmaker.Creator
 import com.study.playlistmaker.R
-import com.study.playlistmaker.SHARED_PREFERENCES
 import com.study.playlistmaker.domain.api.history.HistoryInteractor
 import com.study.playlistmaker.domain.api.search.SearchInteractor
 import com.study.playlistmaker.domain.models.Track
@@ -49,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchAdapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
 
-    private lateinit var historyInteractorImpl: HistoryInteractor
+    private lateinit var historyInteractor: HistoryInteractor
 
     private val tracksInteractorImpl = Creator.provideSearchInteractor()
 
@@ -64,8 +63,7 @@ class SearchActivity : AppCompatActivity() {
 
         initializeViews()
 
-        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-        historyInteractorImpl = Creator.provideHistoryInteractor(sharedPreferences)
+        historyInteractor = Creator.provideHistoryInteractor()
 
         setupAdapters()
         setupListeners()
@@ -118,7 +116,7 @@ class SearchActivity : AppCompatActivity() {
         searchRecyclerView.adapter = searchAdapter
 
         historyAdapter = TrackAdapter(
-            trackList = historyInteractorImpl.currentHistory,
+            trackList = historyInteractor.currentHistory,
             clickListener = { track -> openPlayerWithTrack(track) }
         )
         historyRecyclerView.adapter = historyAdapter
@@ -136,7 +134,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistoryButton.setOnClickListener {
-            historyInteractorImpl.clearHistory()
+            historyInteractor.clearHistory()
             historyAdapter.notifyItemRangeRemoved(0, 10)
             historyView.isVisible = false
         }
@@ -153,7 +151,7 @@ class SearchActivity : AppCompatActivity() {
                     searchAdapter.notifyItemRangeRemoved(0, itemCount)
                     emptyResultError.isVisible = false
                     networkError.isVisible = false
-                    if (searchEditText.hasFocus() && historyInteractorImpl.currentHistory.isNotEmpty()) {
+                    if (searchEditText.hasFocus() && historyInteractor.currentHistory.isNotEmpty()) {
                         historyAdapter.notifyItemRangeChanged(0, 10)
                         searchRecyclerView.isVisible = false
                         historyView.isVisible = true
@@ -164,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
             }
         )
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchText.isEmpty() && historyInteractorImpl.currentHistory.isNotEmpty()) {
+            if (hasFocus && searchText.isEmpty() && historyInteractor.currentHistory.isNotEmpty()) {
                 searchRecyclerView.isVisible = false
                 historyView.isVisible = true
                 emptyResultError.isVisible = false
@@ -239,8 +237,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayerWithTrack(track: Track) {
         if (debounceTrackClick()) {
-            historyInteractorImpl.addTrackToHistory(track)
-            historyAdapter.updateData(historyInteractorImpl.currentHistory)
+            historyInteractor.addTrackToHistory(track)
+            historyAdapter.updateData(historyInteractor.currentHistory)
             val itemJson = gson.toJson(track)
             startActivity(Intent(this, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson))
         }
