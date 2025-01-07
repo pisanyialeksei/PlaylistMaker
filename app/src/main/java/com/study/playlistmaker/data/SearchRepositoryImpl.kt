@@ -9,23 +9,12 @@ class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRep
 
     override fun searchTracks(query: String): List<Track>? {
         val response = networkClient.doRequest(SearchRequest(query))
-        if (response.resultCode == 200) {
-            return (response as? SearchResponse)?.results?.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.trackTimeMillis,
-                    it.artworkUrl100,
-                    it.collectionName,
-                    it.releaseDate,
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl
-                )
+        return if (response.resultCode == 200) {
+            (response as? SearchResponse)?.results?.map {
+                it.toModel()
             } ?: emptyList()
         } else {
-            return null
+            null
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.study.playlistmaker.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,8 +21,6 @@ import com.study.playlistmaker.R
 import com.study.playlistmaker.domain.api.history.HistoryInteractor
 import com.study.playlistmaker.domain.api.search.SearchInteractor
 import com.study.playlistmaker.domain.models.Track
-import com.study.playlistmaker.domain.models.Track.Companion.TRACK_INTENT_KEY
-import com.study.playlistmaker.gson
 import com.study.playlistmaker.presentation.track.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
@@ -50,7 +47,8 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var historyInteractor: HistoryInteractor
 
-    private val tracksInteractorImpl = Creator.provideSearchInteractor()
+    private val searchInteractor = Creator.provideSearchInteractor()
+    private val trackNavigationInteractor = Creator.provideTrackNavigationInteractor()
 
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearchRequest(searchText) }
@@ -193,7 +191,7 @@ class SearchActivity : AppCompatActivity() {
         networkError.isVisible = false
         progressBar.isVisible = true
 
-        tracksInteractorImpl.searchTracks(
+        searchInteractor.searchTracks(
             query = searchQuery,
             consumer = (object : SearchInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?) {
@@ -203,11 +201,9 @@ class SearchActivity : AppCompatActivity() {
                             foundTracks == null -> {
                                 networkError.isVisible = true
                             }
-
                             foundTracks.isEmpty() -> {
                                 emptyResultError.isVisible = true
                             }
-
                             else -> {
                                 searchList.clear()
                                 searchList.addAll(foundTracks)
@@ -239,8 +235,8 @@ class SearchActivity : AppCompatActivity() {
         if (debounceTrackClick()) {
             historyInteractor.addTrackToHistory(track)
             historyAdapter.updateData(historyInteractor.currentHistory)
-            val itemJson = gson.toJson(track)
-            startActivity(Intent(this, PlayerActivity::class.java).putExtra(TRACK_INTENT_KEY, itemJson))
+            val playerIntent = trackNavigationInteractor.createTrackIntent(track, this)
+            startActivity(playerIntent)
         }
     }
 

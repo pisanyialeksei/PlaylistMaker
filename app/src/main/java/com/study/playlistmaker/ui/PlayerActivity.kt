@@ -16,22 +16,20 @@ import com.study.playlistmaker.Creator
 import com.study.playlistmaker.R
 import com.study.playlistmaker.domain.api.mediaplayer.MediaPlayerInteractor
 import com.study.playlistmaker.domain.models.Track
-import com.study.playlistmaker.domain.models.Track.Companion.TRACK_INTENT_KEY
 import com.study.playlistmaker.dpToPx
 import com.study.playlistmaker.formatMsToDuration
-import com.study.playlistmaker.gson
 
 class PlayerActivity : AppCompatActivity() {
-
-    private lateinit var currentTrack: Track
 
     private lateinit var toolbar: Toolbar
     private lateinit var cover: ImageView
     private lateinit var playPauseButton: ImageButton
     private lateinit var currentPosition: TextView
 
+    private lateinit var currentTrack: Track
     private lateinit var mediaPlayerInteractor: MediaPlayerInteractor
 
+    private val trackNavigationInteractor = Creator.provideTrackNavigationInteractor()
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val currentPositionUpdateRunnable = object : Runnable {
         override fun run() {
@@ -46,7 +44,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        currentTrack = gson.fromJson(intent.getStringExtra(TRACK_INTENT_KEY), Track::class.java)
+        currentTrack = trackNavigationInteractor.getTrackFromIntent(intent)
         mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
 
         initializeViews()
