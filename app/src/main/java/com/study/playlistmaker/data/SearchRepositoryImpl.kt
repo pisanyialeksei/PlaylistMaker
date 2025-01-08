@@ -11,7 +11,18 @@ class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRep
         val response = networkClient.doRequest(SearchRequest(query))
         return if (response.resultCode == 200) {
             (response as? SearchResponse)?.results?.map {
-                it.toModel()
+                Track(
+                    it.trackId,
+                    it.trackName,
+                    it.artistName,
+                    it.trackTimeMillis,
+                    it.artworkUrl100,
+                    it.collectionName,
+                    it.releaseDate,
+                    it.primaryGenreName,
+                    it.country,
+                    it.previewUrl
+                )
             } ?: emptyList()
         } else {
             null

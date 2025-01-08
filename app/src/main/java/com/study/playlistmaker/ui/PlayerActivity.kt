@@ -18,6 +18,7 @@ import com.study.playlistmaker.domain.api.mediaplayer.MediaPlayerInteractor
 import com.study.playlistmaker.domain.models.Track
 import com.study.playlistmaker.dpToPx
 import com.study.playlistmaker.formatMsToDuration
+import com.study.playlistmaker.presentation.PlayerNavigator
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -29,7 +30,6 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var currentTrack: Track
     private lateinit var mediaPlayerInteractor: MediaPlayerInteractor
 
-    private val trackNavigationInteractor = Creator.provideTrackNavigationInteractor()
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val currentPositionUpdateRunnable = object : Runnable {
         override fun run() {
@@ -44,7 +44,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        currentTrack = trackNavigationInteractor.getTrackFromIntent(intent)
+        currentTrack = PlayerNavigator.getTrackFromIntent(intent)
         mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
 
         initializeViews()

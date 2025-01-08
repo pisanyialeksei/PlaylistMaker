@@ -7,18 +7,15 @@ import com.study.playlistmaker.data.HistoryRepositoryImpl
 import com.study.playlistmaker.data.MediaPlayerRepositoryImpl
 import com.study.playlistmaker.data.SearchRepositoryImpl
 import com.study.playlistmaker.data.ThemeRepositoryImpl
-import com.study.playlistmaker.data.TrackNavigationRepositoryImpl
 import com.study.playlistmaker.data.network.RetrofitNetworkClient
 import com.study.playlistmaker.domain.api.history.HistoryInteractor
 import com.study.playlistmaker.domain.api.mediaplayer.MediaPlayerInteractor
 import com.study.playlistmaker.domain.api.search.SearchInteractor
 import com.study.playlistmaker.domain.api.theme.ThemeInteractor
-import com.study.playlistmaker.domain.api.track.TrackNavigationInteractor
 import com.study.playlistmaker.domain.impl.HistoryInteractorImpl
 import com.study.playlistmaker.domain.impl.MediaPlayerInteractorImpl
 import com.study.playlistmaker.domain.impl.SearchInteractorImpl
 import com.study.playlistmaker.domain.impl.ThemeInteractorImpl
-import com.study.playlistmaker.domain.impl.TrackNavigationInteractorImpl
 
 object Creator {
 
@@ -50,12 +47,6 @@ object Creator {
     fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
         return MediaPlayerInteractorImpl(
             MediaPlayerRepositoryImpl()
-        )
-    }
-
-    fun provideTrackNavigationInteractor(): TrackNavigationInteractor {
-        return TrackNavigationInteractorImpl(
-            TrackNavigationRepositoryImpl()
         )
     }
 }

@@ -21,6 +21,7 @@ import com.study.playlistmaker.R
 import com.study.playlistmaker.domain.api.history.HistoryInteractor
 import com.study.playlistmaker.domain.api.search.SearchInteractor
 import com.study.playlistmaker.domain.models.Track
+import com.study.playlistmaker.presentation.PlayerNavigator
 import com.study.playlistmaker.presentation.track.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
@@ -48,7 +49,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyInteractor: HistoryInteractor
 
     private val searchInteractor = Creator.provideSearchInteractor()
-    private val trackNavigationInteractor = Creator.provideTrackNavigationInteractor()
 
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearchRequest(searchText) }
@@ -235,7 +235,7 @@ class SearchActivity : AppCompatActivity() {
         if (debounceTrackClick()) {
             historyInteractor.addTrackToHistory(track)
             historyAdapter.updateData(historyInteractor.currentHistory)
-            val playerIntent = trackNavigationInteractor.createTrackIntent(track, this)
+            val playerIntent = PlayerNavigator.createPlayerIntent(track, this)
             startActivity(playerIntent)
         }
     }
