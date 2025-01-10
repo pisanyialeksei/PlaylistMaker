@@ -1,4 +1,4 @@
-package com.study.playlistmaker.track
+package com.study.playlistmaker.domain.models
 
 data class Track(
     val trackId: Long,
@@ -13,8 +13,4 @@ data class Track(
     val previewUrl: String,
 ) {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-
-    companion object {
-        const val TRACK_INTENT_KEY = "track"
-    }
 }

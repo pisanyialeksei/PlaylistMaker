@@ -1,4 +1,4 @@
-package com.study.playlistmaker
+package com.study.playlistmaker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -6,33 +6,36 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.edit
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.study.playlistmaker.App
+import com.study.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var appContext: App
+    private lateinit var themeSwitch: SwitchMaterial
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener {
+        appContext = applicationContext as App
+        themeSwitch = findViewById(R.id.themeSwitcher)
+        themeSwitch.isChecked = appContext.themeInteractor.isDarkThemeEnabled()
+
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener {
             finish()
         }
 
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val appContext = applicationContext as App
-        themeSwitcher.isChecked = appContext.isDarkThemeEnabled
-        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
             appContext.switchTheme(isChecked)
-
-            val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-            sharedPreferences.edit {
-                putBoolean(DARK_THEME_KEY, isChecked)
-            }
         }
 
-        val shareButton = findViewById<Button>(R.id.share)
-        shareButton.setOnClickListener {
+        findViewById<Button>(R.id.share).setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.share_link))
@@ -40,8 +43,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val supportButton = findViewById<Button>(R.id.support)
-        supportButton.setOnClickListener {
+        findViewById<Button>(R.id.support).setOnClickListener {
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
@@ -51,8 +53,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(supportIntent)
         }
 
-        val agreementButton = findViewById<Button>(R.id.agreement)
-        agreementButton.setOnClickListener {
+        findViewById<Button>(R.id.agreement).setOnClickListener {
             val agreementIntent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(getString(R.string.agreement_link))
             }
