@@ -1,9 +1,9 @@
 package com.study.playlistmaker.player.data.impl
 
 import android.media.MediaPlayer
-import com.study.playlistmaker.player.data.MediaPlayerRepository
+import com.study.playlistmaker.player.data.PlayerRepository
 
-class MediaPlayerRepositoryImpl : MediaPlayerRepository {
+class PlayerRepositoryImpl : PlayerRepository {
 
     private val mediaPlayer = MediaPlayer()
 

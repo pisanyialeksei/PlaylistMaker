@@ -3,9 +3,9 @@ package com.study.playlistmaker.creator
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
-import com.study.playlistmaker.player.data.impl.MediaPlayerRepositoryImpl
-import com.study.playlistmaker.player.domain.MediaPlayerInteractor
-import com.study.playlistmaker.player.domain.impl.MediaPlayerInteractorImpl
+import com.study.playlistmaker.player.data.impl.PlayerRepositoryImpl
+import com.study.playlistmaker.player.domain.PlayerInteractor
+import com.study.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.study.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.study.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.study.playlistmaker.search.domain.SearchInteractor
@@ -35,9 +35,9 @@ object Creator {
         )
     }
 
-    fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
-        return MediaPlayerInteractorImpl(
-            MediaPlayerRepositoryImpl()
+    fun providePlayerInteractor(): PlayerInteractor {
+        return PlayerInteractorImpl(
+            PlayerRepositoryImpl()
         )
     }
 

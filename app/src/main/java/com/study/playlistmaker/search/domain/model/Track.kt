@@ -1,5 +1,7 @@
 package com.study.playlistmaker.search.domain.model
 
+import com.study.playlistmaker.player.ui.model.PlayerTrack
+
 data class Track(
     val trackId: Long,
     val trackName: String,
@@ -12,5 +14,19 @@ data class Track(
     val country: String,
     val previewUrl: String,
 ) {
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+
+    fun toUiTrack(): PlayerTrack {
+        return PlayerTrack(
+            trackId = trackId,
+            trackName = trackName,
+            artistName = artistName,
+            trackTimeMillis = trackTimeMillis,
+            artworkUrl100 = artworkUrl100,
+            collectionName = collectionName,
+            releaseDate = releaseDate,
+            primaryGenreName = primaryGenreName,
+            country = country,
+            previewUrl = previewUrl,
+        )
+    }
 }

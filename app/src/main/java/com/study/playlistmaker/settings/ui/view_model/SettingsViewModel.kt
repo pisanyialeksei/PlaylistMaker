@@ -34,13 +34,13 @@ class SettingsViewModel(
         sharingInteractor.openSupport()
     }
 
-    fun getThemeSettings(): ThemeSettings {
-        return settingsInteractor.getThemeSettings()
-    }
-
     fun updateThemeSettings(settings: ThemeSettings) {
         settingsInteractor.updateThemeSettings(settings)
         _themeState.value = settings
+    }
+
+    private fun getThemeSettings(): ThemeSettings {
+        return settingsInteractor.getThemeSettings()
     }
 
     companion object {

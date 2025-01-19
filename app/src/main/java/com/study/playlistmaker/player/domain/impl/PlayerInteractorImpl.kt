@@ -1,10 +1,10 @@
 package com.study.playlistmaker.player.domain.impl
 
-import com.study.playlistmaker.player.data.MediaPlayerRepository
-import com.study.playlistmaker.player.domain.MediaPlayerInteractor
+import com.study.playlistmaker.player.data.PlayerRepository
+import com.study.playlistmaker.player.domain.PlayerInteractor
 import com.study.playlistmaker.player.domain.model.PlayerState
 
-class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository) : MediaPlayerInteractor {
+class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInteractor {
 
     private var state = PlayerState.DEFAULT
 

@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
-import com.study.playlistmaker.PlayerNavigator
 import com.study.playlistmaker.creator.Creator
 import com.study.playlistmaker.databinding.ActivitySearchBinding
+import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
 import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 import com.study.playlistmaker.search.ui.model.SearchState
 import com.study.playlistmaker.search.ui.view_model.SearchViewModel
@@ -45,7 +45,7 @@ class SearchActivity : AppCompatActivity() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track, this))
+                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), this))
             }
         )
         binding.searchRecyclerView.adapter = searchAdapter
@@ -54,7 +54,7 @@ class SearchActivity : AppCompatActivity() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track, this))
+                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), this))
             }
         )
         binding.historyRecyclerView.adapter = historyAdapter

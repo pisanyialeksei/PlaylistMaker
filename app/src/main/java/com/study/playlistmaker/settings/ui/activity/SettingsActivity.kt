@@ -13,15 +13,11 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var settingsViewModel: SettingsViewModel
 
-//    private lateinit var appContext: App
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-//        appContext = applicationContext as App
 
         settingsViewModel = ViewModelProvider(
             this,
