@@ -6,12 +6,9 @@ import android.content.res.Resources
 import com.study.playlistmaker.player.data.impl.MediaPlayerRepositoryImpl
 import com.study.playlistmaker.player.domain.MediaPlayerInteractor
 import com.study.playlistmaker.player.domain.impl.MediaPlayerInteractorImpl
-import com.study.playlistmaker.search.data.impl.HistoryRepositoryImpl
 import com.study.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.study.playlistmaker.search.data.network.RetrofitNetworkClient
-import com.study.playlistmaker.search.domain.HistoryInteractor
 import com.study.playlistmaker.search.domain.SearchInteractor
-import com.study.playlistmaker.search.domain.impl.HistoryInteractorImpl
 import com.study.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.study.playlistmaker.settings.data.impl.SettingsRepositoryImpl
 import com.study.playlistmaker.settings.domain.SettingsInteractor
@@ -31,13 +28,10 @@ object Creator {
 
     fun provideSearchInteractor(): SearchInteractor {
         return SearchInteractorImpl(
-            SearchRepositoryImpl(RetrofitNetworkClient())
-        )
-    }
-
-    fun provideHistoryInteractor(): HistoryInteractor {
-        return HistoryInteractorImpl(
-            HistoryRepositoryImpl(sharedPreferences)
+            SearchRepositoryImpl(
+                networkClient = RetrofitNetworkClient(),
+                sharedPreferences = sharedPreferences
+            )
         )
     }
 
