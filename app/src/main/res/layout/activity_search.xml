@@ -84,7 +84,7 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/search_history"
+        android:id="@+id/history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -100,7 +100,7 @@
             android:textSize="@dimen/search_secondary_view_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_history_recycler_view"
+            android:id="@+id/history_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
@@ -166,7 +166,7 @@
             android:textSize="@dimen/search_secondary_view_text_size" />
 
         <Button
-            android:id="@+id/refresh_button"
+            android:id="@+id/search_network_error_refresh_button"
             style="@style/SearchSecondaryViewButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

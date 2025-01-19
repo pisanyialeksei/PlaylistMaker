@@ -6,44 +6,29 @@ import android.os.Handler
 import android.os.Looper
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.recyclerview.widget.RecyclerView
 import com.study.playlistmaker.PlayerNavigator
 import com.study.playlistmaker.R
 import com.study.playlistmaker.creator.Creator
+import com.study.playlistmaker.databinding.ActivitySearchBinding
 import com.study.playlistmaker.search.domain.SearchInteractor
 import com.study.playlistmaker.search.domain.model.Track
-import com.study.playlistmaker.search.ui.track.TrackAdapter
+import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 
 class SearchActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySearchBinding
 
     private var searchText: String = ""
     private var lastQuery: String = ""
 
     private val searchList = mutableListOf<Track>()
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var searchEditText: EditText
-    private lateinit var searchEditTextClearButton: ImageView
-    private lateinit var historyView: LinearLayout
-    private lateinit var historyRecyclerView: RecyclerView
-    private lateinit var clearHistoryButton: Button
-    private lateinit var searchRecyclerView: RecyclerView
-    private lateinit var emptyResultError: LinearLayout
-    private lateinit var networkError: LinearLayout
-    private lateinit var networkErrorRefreshButton: Button
-    private lateinit var progressBar: ProgressBar
-
-    private lateinit var searchAdapter: TrackAdapter
-    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var searchAdapter: TracksAdapter
+    private lateinit var historyAdapter: TracksAdapter
 
     private val searchInteractor = Creator.provideSearchInteractor()
 
@@ -54,9 +39,9 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
 
-        initializeViews()
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupAdapters()
         setupListeners()
@@ -64,8 +49,8 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (historyView.isVisible) {
-            searchEditText.requestFocus()
+        if (binding.history.isVisible) {
+            binding.searchEditText.requestFocus()
             historyAdapter.notifyItemRangeChanged(0, 10)
         }
     }
@@ -87,54 +72,40 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setText(searchText)
     }
 
-    private fun initializeViews() {
-        toolbar = findViewById(R.id.toolbar)
-        searchEditText = findViewById(R.id.search_edit_text)
-        searchEditTextClearButton = findViewById(R.id.search_edit_text_clear)
-        progressBar = findViewById(R.id.progress_bar)
-        searchRecyclerView = findViewById(R.id.search_recycler_view)
-        historyView = findViewById(R.id.search_history)
-        historyRecyclerView = findViewById(R.id.search_history_recycler_view)
-        clearHistoryButton = findViewById(R.id.clear_history_button)
-        emptyResultError = findViewById(R.id.empty_search_result_error)
-        networkError = findViewById(R.id.search_network_error)
-        networkErrorRefreshButton = findViewById(R.id.refresh_button)
-    }
-
     private fun setupAdapters() {
-        searchAdapter = TrackAdapter(
+        searchAdapter = TracksAdapter(
             trackList = searchList,
             clickListener = { track -> openPlayerWithTrack(track) }
         )
-        searchRecyclerView.adapter = searchAdapter
+        binding.searchRecyclerView.adapter = searchAdapter
 
-        historyAdapter = TrackAdapter(
+        historyAdapter = TracksAdapter(
             trackList = searchInteractor.currentHistory,
             clickListener = { track -> openPlayerWithTrack(track) }
         )
-        historyRecyclerView.adapter = historyAdapter
+        binding.historyRecyclerView.adapter = historyAdapter
     }
 
     private fun setupListeners() {
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             finish()
         }
 
-        searchEditTextClearButton.setOnClickListener {
-            searchEditText.text.clear()
-            val imm = searchEditText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+        binding.searchEditTextClear.setOnClickListener {
+            binding.searchEditText.text.clear()
+            val imm = binding.searchEditText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
         }
 
-        clearHistoryButton.setOnClickListener {
+        binding.clearHistoryButton.setOnClickListener {
             searchInteractor.clearHistory()
             historyAdapter.notifyItemRangeRemoved(0, 10)
-            historyView.isVisible = false
+            binding.history.isVisible = false
         }
 
-        searchEditText.addTextChangedListener(
+        binding.searchEditText.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
-                searchEditTextClearButton.isVisible = !text.isNullOrEmpty()
+                binding.searchEditTextClear.isVisible = !text.isNullOrEmpty()
                 searchText = text.toString()
                 if (searchText.isNotEmpty()) {
                     searchDebounce()
@@ -142,68 +113,68 @@ class SearchActivity : AppCompatActivity() {
                     val itemCount = searchList.size
                     searchList.clear()
                     searchAdapter.notifyItemRangeRemoved(0, itemCount)
-                    emptyResultError.isVisible = false
-                    networkError.isVisible = false
-                    if (searchEditText.hasFocus() && searchInteractor.currentHistory.isNotEmpty()) {
+                    binding.emptySearchResultError.isVisible = false
+                    binding.searchNetworkError.isVisible = false
+                    if (binding.searchEditText.hasFocus() && searchInteractor.currentHistory.isNotEmpty()) {
                         historyAdapter.notifyItemRangeChanged(0, 10)
-                        searchRecyclerView.isVisible = false
-                        historyView.isVisible = true
+                        binding.searchRecyclerView.isVisible = false
+                        binding.history.isVisible = true
                     } else {
-                        searchRecyclerView.isVisible = true
+                        binding.searchRecyclerView.isVisible = true
                     }
                 }
             }
         )
-        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchText.isEmpty() && searchInteractor.currentHistory.isNotEmpty()) {
-                searchRecyclerView.isVisible = false
-                historyView.isVisible = true
-                emptyResultError.isVisible = false
-                networkError.isVisible = false
+                binding.searchRecyclerView.isVisible = false
+                binding.history.isVisible = true
+                binding.emptySearchResultError.isVisible = false
+                binding.searchNetworkError.isVisible = false
             } else {
-                searchRecyclerView.isVisible = true
-                historyView.isVisible = false
-                emptyResultError.isVisible = false
-                networkError.isVisible = false
+                binding.searchRecyclerView.isVisible = true
+                binding.history.isVisible = false
+                binding.emptySearchResultError.isVisible = false
+                binding.searchNetworkError.isVisible = false
             }
         }
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
                 searchDebounce()
                 lastQuery = searchText
             }
             false
         }
-        networkErrorRefreshButton.setOnClickListener {
+        binding.searchNetworkErrorRefreshButton.setOnClickListener {
             performSearchRequest(lastQuery)
         }
     }
 
     private fun performSearchRequest(searchQuery: String) {
-        searchRecyclerView.isVisible = false
-        historyView.isVisible = false
-        emptyResultError.isVisible = false
-        networkError.isVisible = false
-        progressBar.isVisible = true
+        binding.searchRecyclerView.isVisible = false
+        binding.history.isVisible = false
+        binding.emptySearchResultError.isVisible = false
+        binding.searchNetworkError.isVisible = false
+        binding.progressBar.isVisible = true
 
         searchInteractor.searchTracks(
             query = searchQuery,
             consumer = (object : SearchInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?) {
                     mainThreadHandler.post {
-                        progressBar.isVisible = false
+                        binding.progressBar.isVisible = false
                         when {
                             foundTracks == null -> {
-                                networkError.isVisible = true
+                                binding.searchNetworkError.isVisible = true
                             }
                             foundTracks.isEmpty() -> {
-                                emptyResultError.isVisible = true
+                                binding.emptySearchResultError.isVisible = true
                             }
                             else -> {
                                 searchList.clear()
                                 searchList.addAll(foundTracks)
                                 searchAdapter.notifyDataSetChanged()
-                                searchRecyclerView.isVisible = true
+                                binding.searchRecyclerView.isVisible = true
                             }
                         }
                     }
