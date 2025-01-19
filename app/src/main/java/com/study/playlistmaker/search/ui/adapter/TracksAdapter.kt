@@ -37,7 +37,7 @@ class TracksAdapter(
     fun updateData(newTrackList: List<Track>) {
         trackList.clear()
         trackList.addAll(newTrackList)
-        notifyItemRangeChanged(0, newTrackList.size)
+        notifyDataSetChanged()
     }
 
     class TracksViewHolder(private val binding: TracksItemBinding) : RecyclerView.ViewHolder(binding.root) {

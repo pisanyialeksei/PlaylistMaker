@@ -3,7 +3,6 @@ package com.study.playlistmaker.settings.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.study.playlistmaker.App
 import com.study.playlistmaker.creator.Creator
 import com.study.playlistmaker.databinding.ActivitySettingsBinding
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
@@ -14,7 +13,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var settingsViewModel: SettingsViewModel
 
-    private lateinit var appContext: App
+//    private lateinit var appContext: App
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        appContext = applicationContext as App
+//        appContext = applicationContext as App
 
         settingsViewModel = ViewModelProvider(
             this,
