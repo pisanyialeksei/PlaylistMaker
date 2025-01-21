@@ -1,7 +1,7 @@
 package com.study.playlistmaker.search.domain.impl
 
-import com.study.playlistmaker.search.data.SearchRepository
 import com.study.playlistmaker.search.domain.SearchInteractor
+import com.study.playlistmaker.search.domain.SearchRepository
 import com.study.playlistmaker.search.domain.model.Track
 import java.util.concurrent.Executors
 
@@ -9,7 +9,7 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
 
     private val executor = Executors.newCachedThreadPool()
 
-    override val currentHistory: MutableList<Track>
+    override val currentHistory: List<Track>
         get() = repository.currentHistory
 
     override fun searchTracks(query: String, consumer: SearchInteractor.TracksConsumer) {

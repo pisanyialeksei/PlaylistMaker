@@ -1,4 +1,4 @@
-package com.study.playlistmaker.settings.data
+package com.study.playlistmaker.settings.domain
 
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
 

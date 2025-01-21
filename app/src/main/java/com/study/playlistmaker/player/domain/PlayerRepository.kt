@@ -1,4 +1,4 @@
-package com.study.playlistmaker.player.data
+package com.study.playlistmaker.player.domain
 
 interface PlayerRepository {
 

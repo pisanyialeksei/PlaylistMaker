@@ -1,11 +1,11 @@
-package com.study.playlistmaker.settings.data.impl
+package com.study.playlistmaker.settings.domain.impl
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.study.playlistmaker.settings.data.SettingsRepository
+import com.study.playlistmaker.settings.domain.SettingsRepository
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
 
 class SettingsRepositoryImpl(

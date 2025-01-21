@@ -1,7 +1,7 @@
-package com.study.playlistmaker.player.data.impl
+package com.study.playlistmaker.player.domain.impl
 
 import android.media.MediaPlayer
-import com.study.playlistmaker.player.data.PlayerRepository
+import com.study.playlistmaker.player.domain.PlayerRepository
 
 class PlayerRepositoryImpl : PlayerRepository {
 

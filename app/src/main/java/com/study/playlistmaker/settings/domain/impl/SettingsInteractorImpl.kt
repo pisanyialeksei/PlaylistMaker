@@ -1,7 +1,7 @@
 package com.study.playlistmaker.settings.domain.impl
 
-import com.study.playlistmaker.settings.data.SettingsRepository
 import com.study.playlistmaker.settings.domain.SettingsInteractor
+import com.study.playlistmaker.settings.domain.SettingsRepository
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
 
 class SettingsInteractorImpl(
