@@ -1,34 +1,19 @@
 package com.study.playlistmaker
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
-import com.study.playlistmaker.domain.api.theme.ThemeInteractor
+import com.study.playlistmaker.creator.Creator
+import com.study.playlistmaker.settings.domain.SettingsInteractor
 
 class App : Application() {
 
-    lateinit var themeInteractor: ThemeInteractor
-        private set
+    private lateinit var settingsInteractor: SettingsInteractor
 
     override fun onCreate() {
         super.onCreate()
 
         Creator.initPreferences(this)
-        themeInteractor = Creator.provideThemeInteractor(resources)
-        updateUITheme()
-    }
+        settingsInteractor = Creator.provideSettingsInteractor(resources)
 
-    fun switchTheme(toDarkTheme: Boolean) {
-        themeInteractor.setDarkTheme(toDarkTheme)
-        updateUITheme()
-    }
-
-    private fun updateUITheme() {
-        AppCompatDelegate.setDefaultNightMode(
-            if (themeInteractor.isDarkThemeEnabled()) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+        settingsInteractor.updateThemeSettings(settingsInteractor.getThemeSettings())
     }
 }
