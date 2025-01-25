@@ -6,9 +6,6 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.study.playlistmaker.R
 import com.study.playlistmaker.player.domain.PlayerInteractor
 import com.study.playlistmaker.player.domain.model.PlayerState
@@ -115,14 +112,5 @@ class PlayerViewModel(
 
     companion object {
         private const val CURRENT_POSITION_UPDATE_DELAY = 500L
-
-        fun getViewModelFactory(
-            playerInteractor: PlayerInteractor,
-            track: PlayerTrack
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(playerInteractor, track)
-            }
-        }
     }
 }

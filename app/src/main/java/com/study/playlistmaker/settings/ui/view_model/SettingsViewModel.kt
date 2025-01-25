@@ -3,9 +3,6 @@ package com.study.playlistmaker.settings.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.study.playlistmaker.settings.domain.SettingsInteractor
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
 import com.study.playlistmaker.sharing.domain.SharingInteractor
@@ -41,17 +38,5 @@ class SettingsViewModel(
 
     private fun getThemeSettings(): ThemeSettings {
         return settingsInteractor.getThemeSettings()
-    }
-
-    companion object {
-
-        fun getViewModelFactory(
-            sharingInteractor: SharingInteractor,
-            settingsInteractor: SettingsInteractor,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(sharingInteractor, settingsInteractor)
-            }
-        }
     }
 }
