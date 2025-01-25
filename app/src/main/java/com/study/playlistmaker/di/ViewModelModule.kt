@@ -10,7 +10,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel { (track: PlayerTrack) ->
-        println("asdf: Creating PlayerViewModel for track: $track")
         PlayerViewModel(playerInteractor = get(), track = track)
     }
 
