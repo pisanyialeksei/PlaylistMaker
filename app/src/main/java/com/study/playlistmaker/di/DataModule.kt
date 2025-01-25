@@ -2,6 +2,8 @@ package com.study.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.MediaPlayer
+import com.google.gson.Gson
 import com.study.playlistmaker.search.data.network.ItunesSearchApiService
 import com.study.playlistmaker.search.data.network.NetworkClient
 import com.study.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -41,5 +43,13 @@ val dataModule = module {
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
+    }
+
+    factory<MediaPlayer> {
+        MediaPlayer()
+    }
+
+    single<Gson> {
+        Gson()
     }
 }

@@ -3,9 +3,7 @@ package com.study.playlistmaker.player.data.impl
 import android.media.MediaPlayer
 import com.study.playlistmaker.player.domain.PlayerRepository
 
-class PlayerRepositoryImpl : PlayerRepository {
-
-    private val mediaPlayer = MediaPlayer()
+class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
 
     override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.setDataSource(url)

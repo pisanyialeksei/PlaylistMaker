@@ -12,11 +12,15 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get(), sharedPreferences = get())
+        SearchRepositoryImpl(
+            networkClient = get(),
+            sharedPreferences = get(),
+            gson = get()
+        )
     }
 
-    single<PlayerRepository> {
-        PlayerRepositoryImpl()
+    factory<PlayerRepository> {
+        PlayerRepositoryImpl(mediaPlayer = get())
     }
 
     single<SettingsRepository> {

@@ -16,7 +16,7 @@ val interactorModule = module {
         SearchInteractorImpl(repository = get())
     }
 
-    single<PlayerInteractor> {
+    factory<PlayerInteractor> {
         PlayerInteractorImpl(repository = get())
     }
 

@@ -2,18 +2,20 @@ package com.study.playlistmaker.search.data.impl
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.study.playlistmaker.gson
 import com.study.playlistmaker.search.data.dto.SearchRequest
 import com.study.playlistmaker.search.data.dto.SearchResponse
 import com.study.playlistmaker.search.data.network.NetworkClient
 import com.study.playlistmaker.search.domain.SearchRepository
 import com.study.playlistmaker.search.domain.model.Track
+import org.koin.core.component.KoinComponent
 
 class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val sharedPreferences: SharedPreferences,
-) : SearchRepository {
+    private val gson: Gson,
+) : SearchRepository, KoinComponent {
 
     private val historyKey = "SEARCH_HISTORY"
 
