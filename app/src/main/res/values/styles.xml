@@ -59,13 +59,20 @@
         <item name="android:textSize">@dimen/search_item_subtitle_text_size</item>
     </style>
 
-    <style name="SearchSecondaryViewButton">
+    <style name="ListButton">
         <item name="android:backgroundTint">?attr/colorOnPrimary</item>
         <item name="android:letterSpacing">@dimen/button_letter_spacing</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">54dp</item>
+    </style>
+
+    <style name="ListSecondaryViewText">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/list_secondary_view_text_size</item>
     </style>
 
     <style name="PlayerNameAndArtist">
@@ -81,5 +88,11 @@
     <style name="PlayerInfo">
         <item name="android:gravity">center</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TabTextAppearance" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>
