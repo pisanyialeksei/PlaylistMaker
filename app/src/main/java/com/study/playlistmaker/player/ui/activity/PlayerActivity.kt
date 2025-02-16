@@ -3,37 +3,34 @@ package com.study.playlistmaker.player.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.study.playlistmaker.R
-import com.study.playlistmaker.creator.Creator
 import com.study.playlistmaker.databinding.ActivityPlayerBinding
 import com.study.playlistmaker.dpToPx
 import com.study.playlistmaker.formatMsToDuration
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
 import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var playerViewModel: PlayerViewModel
+
+    private val playerViewModel: PlayerViewModel by viewModel {
+        parametersOf(
+            PlayerNavigator.getTrackFromIntent(intent)
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        playerViewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(
-                playerInteractor = Creator.providePlayerInteractor(),
-                track = PlayerNavigator.getTrackFromIntent(intent)
-            )
-        )[PlayerViewModel::class.java]
 
         setupListeners()
 

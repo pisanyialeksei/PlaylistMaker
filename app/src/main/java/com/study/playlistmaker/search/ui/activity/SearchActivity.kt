@@ -7,33 +7,26 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModelProvider
-import com.study.playlistmaker.creator.Creator
 import com.study.playlistmaker.databinding.ActivitySearchBinding
 import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
 import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 import com.study.playlistmaker.search.ui.model.SearchState
 import com.study.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var searchViewModel: SearchViewModel
     private lateinit var searchAdapter: TracksAdapter
     private lateinit var historyAdapter: TracksAdapter
+
+    private val searchViewModel: SearchViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        searchViewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory(
-                Creator.provideSearchInteractor()
-            )
-        )[SearchViewModel::class.java]
 
         setupAdapters()
         setupListeners()
