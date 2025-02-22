@@ -1,25 +1,33 @@
-package com.study.playlistmaker.settings.ui.activity
+package com.study.playlistmaker.settings.ui.fragment
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.study.playlistmaker.databinding.ActivitySettingsBinding
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.study.playlistmaker.databinding.FragmentSettingsBinding
 import com.study.playlistmaker.settings.domain.model.ThemeSettings
 import com.study.playlistmaker.settings.ui.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var binding: FragmentSettingsBinding
 
     private val settingsViewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        settingsViewModel.themeState.observe(this) { themeSettings ->
+        settingsViewModel.themeState.observe(viewLifecycleOwner) { themeSettings ->
             binding.themeSwitcher.isChecked = themeSettings == ThemeSettings.DARK
         }
 
@@ -27,9 +35,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
 
         binding.themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             val newTheme = if (isChecked) ThemeSettings.DARK else ThemeSettings.LIGHT
@@ -47,5 +52,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.agreement.setOnClickListener {
             settingsViewModel.openTerms()
         }
+    }
+
+    companion object {
+
+        fun newInstance() = SettingsFragment()
     }
 }
