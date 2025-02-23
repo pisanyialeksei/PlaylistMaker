@@ -2,10 +2,10 @@ package com.study.playlistmaker.main.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.ActivityRootBinding
-import com.study.playlistmaker.search.ui.fragment.SearchFragment
 
 class RootActivity : AppCompatActivity() {
 
@@ -16,12 +16,9 @@ class RootActivity : AppCompatActivity() {
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                this.add(R.id.rootFragmentContainerView, SearchFragment())
-//                this.add(R.id.rootFragmentContainerView, LibraryFragment())
-//                this.add(R.id.rootFragmentContainerView, SettingsFragment())
-            }
-        }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.root_fragment_container_view) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        binding.bottomNavigationView.setupWithNavController(navController)
     }
 }

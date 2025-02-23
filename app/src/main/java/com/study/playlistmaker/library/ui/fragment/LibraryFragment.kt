@@ -30,7 +30,7 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.libraryViewPager.adapter = LibraryViewPagerAdapter(parentFragmentManager, lifecycle)
+        binding.libraryViewPager.adapter = LibraryViewPagerAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.libraryTabLayout, binding.libraryViewPager) { tab, position ->
             when (position) {
