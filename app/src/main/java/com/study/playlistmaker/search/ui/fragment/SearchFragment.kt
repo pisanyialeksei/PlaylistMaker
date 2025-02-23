@@ -10,11 +10,14 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import com.study.playlistmaker.databinding.FragmentSearchBinding
-import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
+import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 import com.study.playlistmaker.search.ui.model.SearchState
 import com.study.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -23,6 +26,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchAdapter: TracksAdapter
     private lateinit var historyAdapter: TracksAdapter
 
+    private val gson: Gson by inject()
     private val searchViewModel: SearchViewModel by viewModel()
 
     override fun onCreateView(
@@ -46,7 +50,7 @@ class SearchFragment : Fragment() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), requireContext()))
+                navigateToPlayer(track)
             }
         )
         binding.searchRecyclerView.adapter = searchAdapter
@@ -55,7 +59,7 @@ class SearchFragment : Fragment() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), requireContext()))
+                navigateToPlayer(track)
             }
         )
         binding.historyRecyclerView.adapter = historyAdapter
@@ -121,6 +125,13 @@ class SearchFragment : Fragment() {
                 else -> {}
             }
         }
+    }
+
+    private fun navigateToPlayer(track: Track) {
+        val navDirection = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(
+            gson.toJson(track.toUiTrack())
+        )
+        findNavController().navigate(navDirection)
     }
 
     companion object {

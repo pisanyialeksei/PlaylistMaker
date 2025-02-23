@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_searchFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -40,4 +43,13 @@
             android:id="@+id/action_settingsFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
     </fragment>
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.study.playlistmaker.player.ui.activity.PlayerActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player">
+        <argument
+            android:name="track"
+            app:argType="string" />
+    </activity>
 </navigation>

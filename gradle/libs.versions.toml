@@ -37,5 +37,6 @@ retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", ve
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+androidx-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
