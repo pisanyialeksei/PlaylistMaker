@@ -15,4 +15,11 @@
         <item name="android:background">"@android:color/transparent"</item>
     </style>
 
+    <style name="BottomNavigationView" parent="Widget.Design.BottomNavigationView">
+        <item name="android:background">@color/yp_black</item>
+        <item name="itemIconTint">@color/bottom_nav_selector</item>"
+        <item name="itemTextColor">@color/bottom_nav_selector</item>"
+        <item name="itemTextAppearance">@style/BottomNavigationText</item>
+    </style>
+
 </resources>

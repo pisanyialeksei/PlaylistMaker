@@ -5,21 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".library.ui.activity.LibraryActivity">
+    tools:context=".library.ui.fragment.LibraryFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:layout_marginBottom="0dp"
-        app:contentInsetStartWithNavigation="64dp"
-        app:navigationIcon="@drawable/ic_back">
-
-        <TextView
-            style="@style/ToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/library_title" />
+        app:title="@string/library_title"
+        app:titleTextAppearance="@style/ToolbarTitle">
 
     </androidx.appcompat.widget.Toolbar>
 

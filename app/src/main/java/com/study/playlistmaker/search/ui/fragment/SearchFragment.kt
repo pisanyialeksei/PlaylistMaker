@@ -1,32 +1,44 @@
-package com.study.playlistmaker.search.ui.activity
+package com.study.playlistmaker.search.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import com.study.playlistmaker.databinding.ActivitySearchBinding
-import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
+import com.study.playlistmaker.databinding.FragmentSearchBinding
+import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 import com.study.playlistmaker.search.ui.model.SearchState
 import com.study.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private lateinit var binding: FragmentSearchBinding
     private lateinit var searchAdapter: TracksAdapter
     private lateinit var historyAdapter: TracksAdapter
 
+    private val gson: Gson by inject()
     private val searchViewModel: SearchViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupAdapters()
         setupListeners()
@@ -38,7 +50,7 @@ class SearchActivity : AppCompatActivity() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), this))
+                navigateToPlayer(track)
             }
         )
         binding.searchRecyclerView.adapter = searchAdapter
@@ -47,16 +59,13 @@ class SearchActivity : AppCompatActivity() {
             trackList = mutableListOf(),
             clickListener = { track ->
                 searchViewModel.onTrackClick(track)
-                startActivity(PlayerNavigator.createPlayerIntent(track.toUiTrack(), this))
+                navigateToPlayer(track)
             }
         )
         binding.historyRecyclerView.adapter = historyAdapter
     }
 
     private fun setupListeners() {
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
 
         binding.searchEditTextClear.setOnClickListener {
             binding.searchEditText.text.clear()
@@ -91,7 +100,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        searchViewModel.searchState.observe(this) { state ->
+        searchViewModel.searchState.observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
     }
@@ -116,5 +125,17 @@ class SearchActivity : AppCompatActivity() {
                 else -> {}
             }
         }
+    }
+
+    private fun navigateToPlayer(track: Track) {
+        val navDirection = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(
+            gson.toJson(track.toUiTrack())
+        )
+        findNavController().navigate(navDirection)
+    }
+
+    companion object {
+
+        fun newInstance() = SearchFragment()
     }
 }

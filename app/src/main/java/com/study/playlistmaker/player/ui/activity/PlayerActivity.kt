@@ -1,18 +1,21 @@
 package com.study.playlistmaker.player.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.ActivityPlayerBinding
 import com.study.playlistmaker.dpToPx
 import com.study.playlistmaker.formatMsToDuration
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
-import com.study.playlistmaker.player.ui.navigation.PlayerNavigator
+import com.study.playlistmaker.player.ui.model.PlayerTrack
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -20,9 +23,10 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
+    private val gson: Gson by inject()
     private val playerViewModel: PlayerViewModel by viewModel {
         parametersOf(
-            PlayerNavigator.getTrackFromIntent(intent)
+            getTrackFromIntent(intent)
         )
     }
 
@@ -82,5 +86,18 @@ class PlayerActivity : AppCompatActivity() {
             playPauseButton.isEnabled = state.isPlayButtonEnabled
             playPauseButton.setBackgroundResource(state.playButtonBackground)
         }
+    }
+
+    private fun getTrackFromIntent(intent: Intent): PlayerTrack {
+        val trackJson = intent.getStringExtra(TRACK_EXTRA)
+        return gson.fromJson(trackJson, PlayerTrack::class.java)
+    }
+
+    companion object {
+
+        /**
+         * Argument name in [R.navigation.main_navigation_graph]
+         */
+        private const val TRACK_EXTRA = "track"
     }
 }
