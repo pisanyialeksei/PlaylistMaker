@@ -1,16 +1,18 @@
 package com.study.playlistmaker.player.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.R
 import com.study.playlistmaker.player.domain.PlayerInteractor
 import com.study.playlistmaker.player.domain.model.PlayerState
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
 import com.study.playlistmaker.player.ui.model.PlayerTrack
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
@@ -20,16 +22,7 @@ class PlayerViewModel(
     private val _screenState = MutableLiveData<PlayerScreenState>()
     val screenState: LiveData<PlayerScreenState> = _screenState
 
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
-    private val currentPositionUpdateRunnable = object : Runnable {
-        override fun run() {
-            val currentState = _screenState.value ?: return
-            if (currentState.playerState == PlayerState.PLAYING) {
-                updateState(currentPosition = playerInteractor.getCurrentPosition())
-                mainThreadHandler.postDelayed(this, CURRENT_POSITION_UPDATE_DELAY)
-            }
-        }
-    }
+    private var timerJob: Job? = null
 
     @DrawableRes
     private val playButtonBackground: Int = R.drawable.play_button_background
@@ -51,13 +44,13 @@ class PlayerViewModel(
     fun togglePlayback() {
         playerInteractor.setPlaybackControl()
         if (playerInteractor.isPlaying()) {
-            mainThreadHandler.post(currentPositionUpdateRunnable)
+            startTimer()
             updateState(
                 playerState = PlayerState.PLAYING,
                 playButtonBackground = pauseButtonBackground
             )
         } else {
-            mainThreadHandler.removeCallbacks(currentPositionUpdateRunnable)
+            timerJob?.cancel()
             updateState(
                 playerState = PlayerState.PAUSED,
                 playButtonBackground = playButtonBackground
@@ -67,7 +60,7 @@ class PlayerViewModel(
 
     fun onPause() {
         playerInteractor.pause()
-        mainThreadHandler.removeCallbacks(currentPositionUpdateRunnable)
+        timerJob?.cancel()
         updateState(
             playerState = PlayerState.PAUSED,
             playButtonBackground = playButtonBackground
@@ -76,7 +69,7 @@ class PlayerViewModel(
 
     fun onDestroy() {
         playerInteractor.release()
-        mainThreadHandler.removeCallbacks(currentPositionUpdateRunnable)
+        timerJob?.cancel()
     }
 
     private fun prepareTrack(track: PlayerTrack) {
@@ -86,6 +79,7 @@ class PlayerViewModel(
                 updateState(isPlayButtonEnabled = true)
             },
             onCompletion = {
+                timerJob?.cancel()
                 updateState(
                     playerState = PlayerState.PREPARED,
                     currentPosition = 0,
@@ -110,7 +104,16 @@ class PlayerViewModel(
         )
     }
 
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (true) {
+                delay(CURRENT_POSITION_UPDATE_DELAY)
+                updateState(currentPosition = playerInteractor.getCurrentPosition())
+            }
+        }
+    }
+
     companion object {
-        private const val CURRENT_POSITION_UPDATE_DELAY = 500L
+        private const val CURRENT_POSITION_UPDATE_DELAY = 300L
     }
 }
