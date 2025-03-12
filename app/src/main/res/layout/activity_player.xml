@@ -174,10 +174,15 @@
                 <TextView
                     android:id="@+id/album_value"
                     style="@style/PlayerInfo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/player_info_item_height"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:singleLine="true"
                     android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/album_title"
                     app:layout_constraintTop_toBottomOf="@id/duration_value"
                     tools:text="Some album" />
 
