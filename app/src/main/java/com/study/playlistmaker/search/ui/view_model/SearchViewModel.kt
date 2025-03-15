@@ -5,9 +5,12 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.search.domain.SearchInteractor
 import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.search.ui.model.SearchState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
 
@@ -114,7 +117,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         val current = isClickOnTrackAllowed
         if (isClickOnTrackAllowed) {
             isClickOnTrackAllowed = false
-            mainThreadHandler.postDelayed({ isClickOnTrackAllowed = true }, TRACK_CLICK_DEBOUNCE_DELAY)
+            viewModelScope.launch {
+                delay(TRACK_CLICK_DEBOUNCE_DELAY)
+                isClickOnTrackAllowed = true
+            }
         }
         return current
     }

@@ -12,6 +12,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 koin = "3.3.0"
 kotlin = "1.9.0"
+kotlinxCoroutinesAndroid = "1.6.4"
 material = "1.12.0"
 navigation = "2.5.3"
 retrofit = "2.11.0"
@@ -32,6 +33,7 @@ glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = 
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
