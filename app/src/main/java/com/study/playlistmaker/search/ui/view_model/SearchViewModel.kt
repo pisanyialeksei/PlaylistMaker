@@ -81,26 +81,23 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private fun performSearchRequest(query: String) {
         _searchState.value = SearchState.Loading
 
-        searchInteractor.searchTracks(
-            query = query,
-            consumer = (object : SearchInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?) {
+        viewModelScope.launch {
+            searchInteractor
+                .searchTracks(query)
+                .collect {
                     when {
-                        foundTracks == null -> {
+                        it == null -> {
                             _searchState.postValue(SearchState.Error.Network)
                         }
-
-                        foundTracks.isEmpty() -> {
+                        it.isEmpty() -> {
                             _searchState.postValue(SearchState.Error.EmptyResult)
                         }
-
                         else -> {
-                            _searchState.postValue(SearchState.Content(foundTracks))
+                            _searchState.postValue(SearchState.Content(it))
                         }
                     }
                 }
-            })
-        )
+        }
     }
 
     private fun searchDebounce() {
