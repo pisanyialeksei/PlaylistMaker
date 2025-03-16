@@ -8,9 +8,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.TracksItemBinding
-import com.study.playlistmaker.dpToPx
-import com.study.playlistmaker.formatMsToDuration
 import com.study.playlistmaker.search.domain.model.Track
+import com.study.playlistmaker.utils.dpToPx
+import com.study.playlistmaker.utils.formatMsToDuration
 
 class TracksAdapter(
     private val trackList: MutableList<Track>,
