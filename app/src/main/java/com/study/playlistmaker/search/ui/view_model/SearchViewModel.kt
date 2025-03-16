@@ -1,13 +1,14 @@
 package com.study.playlistmaker.search.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.search.domain.SearchInteractor
 import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.search.ui.model.SearchState
+import com.study.playlistmaker.utils.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
 
@@ -17,18 +18,39 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private val _searchState = MutableLiveData<SearchState>()
     val searchState: LiveData<SearchState> = _searchState
 
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { searchDebounce() }
+    private val searchDebouncer: (String) -> Unit
+    private val trackClickDebouncer: (Track) -> Unit
 
-    private var isClickOnTrackAllowed = true
+    init {
+        searchDebouncer = debounce<String>(
+            delayMillis = SEARCH_DEBOUNCE_DELAY,
+            coroutineScope = viewModelScope,
+            useLastParam = true
+        ) { query ->
+            if (query.isNotEmpty() && query == searchText) {
+                performSearchRequest(query)
+            }
+        }
+
+        trackClickDebouncer = debounce<Track>(
+            delayMillis = TRACK_CLICK_DEBOUNCE_DELAY,
+            coroutineScope = viewModelScope,
+            useLastParam = false
+        ) { track ->
+            searchInteractor.addTrackToHistory(track)
+            if (_searchState.value is SearchState.History) {
+                showHistory()
+            }
+        }
+    }
 
     fun onSearchTextChanged(text: String) {
         searchText = text
-        if (text.isEmpty()) {
+        if (searchText.isEmpty()) {
             clearSearch()
         } else {
-            mainThreadHandler.removeCallbacks(searchRunnable)
-            mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+            lastQuery = searchText
+            searchDebouncer(searchText)
         }
     }
 
@@ -41,14 +63,12 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     fun performManualSearch() {
         if (searchText.isEmpty()) return
         lastQuery = searchText
-        cancelPendingSearch()
-        performSearchRequest(searchText)
+        searchDebouncer(searchText)
     }
 
     fun retryLastSearch() {
         if (lastQuery.isNotEmpty()) {
-            cancelPendingSearch()
-            performSearchRequest(lastQuery)
+            searchDebouncer(lastQuery)
         }
     }
 
@@ -58,16 +78,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
     fun onTrackClick(track: Track) {
-        if (debounceTrackClick()) {
-            searchInteractor.addTrackToHistory(track)
-            if (_searchState.value is SearchState.History) {
-                showHistory()
-            }
-        }
+        trackClickDebouncer(track)
     }
 
     private fun clearSearch() {
-        cancelPendingSearch()
         if (searchInteractor.currentHistory.isNotEmpty()) {
             showHistory()
         } else {
@@ -82,45 +96,23 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private fun performSearchRequest(query: String) {
         _searchState.value = SearchState.Loading
 
-        searchInteractor.searchTracks(
-            query = query,
-            consumer = (object : SearchInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?) {
+        viewModelScope.launch {
+            searchInteractor
+                .searchTracks(query)
+                .collect { foundTracks ->
                     when {
                         foundTracks == null -> {
                             _searchState.postValue(SearchState.Error.Network)
                         }
-
                         foundTracks.isEmpty() -> {
                             _searchState.postValue(SearchState.Error.EmptyResult)
                         }
-
                         else -> {
                             _searchState.postValue(SearchState.Content(foundTracks))
                         }
                     }
                 }
-            })
-        )
-    }
-
-    private fun searchDebounce() {
-        if (searchText.isNotEmpty()) {
-            performSearchRequest(searchText)
         }
-    }
-
-    private fun debounceTrackClick(): Boolean {
-        val current = isClickOnTrackAllowed
-        if (isClickOnTrackAllowed) {
-            isClickOnTrackAllowed = false
-            mainThreadHandler.postDelayed({ isClickOnTrackAllowed = true }, TRACK_CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    private fun cancelPendingSearch() {
-        mainThreadHandler.removeCallbacks(searchRunnable)
     }
 
     companion object {

@@ -9,6 +9,8 @@ import com.study.playlistmaker.search.data.dto.SearchResponse
 import com.study.playlistmaker.search.data.network.NetworkClient
 import com.study.playlistmaker.search.domain.SearchRepository
 import com.study.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class SearchRepositoryImpl(
@@ -22,25 +24,27 @@ class SearchRepositoryImpl(
     override val currentHistory: MutableList<Track>
         get() = getHistory()
 
-    override fun searchTracks(query: String): List<Track>? {
+    override fun searchTracks(query: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(SearchRequest(query))
-        return if (response.resultCode == 200) {
-            (response as? SearchResponse)?.results?.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.trackTimeMillis,
-                    it.artworkUrl100,
-                    it.collectionName,
-                    it.releaseDate,
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl
-                )
-            } ?: emptyList()
+        if (response.resultCode == 200) {
+            emit(
+                (response as? SearchResponse)?.results?.map {
+                    Track(
+                        it.trackId,
+                        it.trackName,
+                        it.artistName,
+                        it.trackTimeMillis,
+                        it.artworkUrl100,
+                        it.collectionName,
+                        it.releaseDate,
+                        it.primaryGenreName,
+                        it.country,
+                        it.previewUrl
+                    )
+                } ?: emptyList()
+            )
         } else {
-            null
+            emit(null)
         }
     }
 

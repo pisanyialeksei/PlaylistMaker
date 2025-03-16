@@ -10,11 +10,11 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.ActivityPlayerBinding
-import com.study.playlistmaker.dpToPx
-import com.study.playlistmaker.formatMsToDuration
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
 import com.study.playlistmaker.player.ui.model.PlayerTrack
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.study.playlistmaker.utils.dpToPx
+import com.study.playlistmaker.utils.formatMsToDuration
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
