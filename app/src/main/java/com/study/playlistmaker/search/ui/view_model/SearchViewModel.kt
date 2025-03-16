@@ -1,7 +1,5 @@
 package com.study.playlistmaker.search.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.search.domain.SearchInteractor
 import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.search.ui.model.SearchState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -17,21 +16,20 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private var searchText: String = ""
     private var lastQuery: String = ""
 
+    private var searchJob: Job? = null
+
     private val _searchState = MutableLiveData<SearchState>()
     val searchState: LiveData<SearchState> = _searchState
-
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { searchDebounce() }
 
     private var isClickOnTrackAllowed = true
 
     fun onSearchTextChanged(text: String) {
         searchText = text
-        if (text.isEmpty()) {
+        if (searchText.isEmpty()) {
             clearSearch()
         } else {
-            mainThreadHandler.removeCallbacks(searchRunnable)
-            mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+            lastQuery = searchText
+            searchDebounce()
         }
     }
 
@@ -44,14 +42,12 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     fun performManualSearch() {
         if (searchText.isEmpty()) return
         lastQuery = searchText
-        cancelPendingSearch()
-        performSearchRequest(searchText)
+        searchDebounce()
     }
 
     fun retryLastSearch() {
         if (lastQuery.isNotEmpty()) {
-            cancelPendingSearch()
-            performSearchRequest(lastQuery)
+            searchDebounce()
         }
     }
 
@@ -70,7 +66,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
     private fun clearSearch() {
-        cancelPendingSearch()
+        searchJob?.cancel()
         if (searchInteractor.currentHistory.isNotEmpty()) {
             showHistory()
         } else {
@@ -109,7 +105,11 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private fun searchDebounce() {
         if (searchText.isNotEmpty()) {
-            performSearchRequest(searchText)
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                performSearchRequest(searchText)
+            }
         }
     }
 
@@ -123,10 +123,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
             }
         }
         return current
-    }
-
-    private fun cancelPendingSearch() {
-        mainThreadHandler.removeCallbacks(searchRunnable)
     }
 
     companion object {
