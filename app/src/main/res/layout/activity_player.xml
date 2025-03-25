@@ -112,7 +112,7 @@
                 android:layout_height="51dp"
                 android:layout_marginTop="54dp"
                 android:background="@drawable/player_secondary_button_background"
-                android:src="@drawable/ic_add_to_favorites"
+                android:src="@drawable/ic_add_to_favorites_disabled"
                 app:backgroundTint="@null"
                 app:iconTint="@color/white"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"

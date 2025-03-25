@@ -60,6 +60,9 @@ class PlayerActivity : AppCompatActivity() {
         binding.playPauseButton.setOnClickListener {
             playerViewModel.togglePlayback()
         }
+        binding.addToFavoritesButton.setOnClickListener {
+            playerViewModel.onFavoriteClicked()
+        }
     }
 
     private fun render(state: PlayerScreenState) {
@@ -68,6 +71,12 @@ class PlayerActivity : AppCompatActivity() {
             artist.text = state.track.artistName
             currentPosition.text = formatMsToDuration(state.currentPosition.toLong())
             durationValue.text = formatMsToDuration(state.track.trackTimeMillis)
+
+            if (state.isFavorite) {
+                binding.addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_enabled)
+            } else {
+                binding.addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_disabled)
+            }
 
             Glide.with(this@PlayerActivity)
                 .load(state.track.getCoverArtwork())

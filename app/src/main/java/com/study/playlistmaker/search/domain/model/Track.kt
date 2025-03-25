@@ -13,6 +13,7 @@ data class Track(
     val primaryGenreName: String?,
     val country: String,
     val previewUrl: String,
+    var isFavorite: Boolean = false,
 ) {
 
     fun toUiTrack(): PlayerTrack {
@@ -27,6 +28,7 @@ data class Track(
             primaryGenreName = primaryGenreName,
             country = country,
             previewUrl = previewUrl,
+            isFavorite = isFavorite,
         )
     }
 }

@@ -14,9 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.study.playlistmaker.databinding.FragmentSearchBinding
 import com.study.playlistmaker.search.domain.model.Track
-import com.study.playlistmaker.search.ui.adapter.TracksAdapter
 import com.study.playlistmaker.search.ui.model.SearchState
 import com.study.playlistmaker.search.ui.view_model.SearchViewModel
+import com.study.playlistmaker.ui.adapter.TracksAdapter
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -43,6 +43,12 @@ class SearchFragment : Fragment() {
         setupAdapters()
         setupListeners()
         observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        searchViewModel.updateFavoritesStatus()
     }
 
     private fun setupAdapters() {

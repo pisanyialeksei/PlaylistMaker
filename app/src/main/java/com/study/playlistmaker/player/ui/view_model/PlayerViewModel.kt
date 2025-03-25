@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.R
+import com.study.playlistmaker.library.domain.FavoritesInteractor
 import com.study.playlistmaker.player.domain.PlayerInteractor
 import com.study.playlistmaker.player.domain.model.PlayerState
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     track: PlayerTrack,
 ) : ViewModel() {
 
@@ -36,7 +38,8 @@ class PlayerViewModel(
             playerState = PlayerState.DEFAULT,
             currentPosition = 0,
             isPlayButtonEnabled = false,
-            playButtonBackground = playButtonBackground
+            playButtonBackground = playButtonBackground,
+            isFavorite = track.isFavorite,
         )
         prepareTrack(track)
     }
@@ -72,6 +75,22 @@ class PlayerViewModel(
         timerJob?.cancel()
     }
 
+    fun onFavoriteClicked() {
+        val currentState = _screenState.value ?: return
+        val track = currentState.track
+        val isFavorite = currentState.isFavorite
+
+        viewModelScope.launch {
+            if (isFavorite) {
+                favoritesInteractor.removeTrack(track.toDomainTrack())
+                updateState(isFavorite = false)
+            } else {
+                favoritesInteractor.addTrack(track.toDomainTrack())
+                updateState(isFavorite = true)
+            }
+        }
+    }
+
     private fun prepareTrack(track: PlayerTrack) {
         playerInteractor.prepare(
             url = track.previewUrl,
@@ -93,14 +112,16 @@ class PlayerViewModel(
         playerState: PlayerState? = null,
         currentPosition: Int? = null,
         isPlayButtonEnabled: Boolean? = null,
-        playButtonBackground: Int? = null
+        playButtonBackground: Int? = null,
+        isFavorite: Boolean? = null,
     ) {
         val currentState = _screenState.value ?: return
         _screenState.value = currentState.copy(
             playerState = playerState ?: currentState.playerState,
             currentPosition = currentPosition ?: currentState.currentPosition,
             isPlayButtonEnabled = isPlayButtonEnabled ?: currentState.isPlayButtonEnabled,
-            playButtonBackground = playButtonBackground ?: currentState.playButtonBackground
+            playButtonBackground = playButtonBackground ?: currentState.playButtonBackground,
+            isFavorite = isFavorite ?: currentState.isFavorite,
         )
     }
 

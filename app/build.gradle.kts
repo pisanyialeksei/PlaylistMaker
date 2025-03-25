@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     id("androidx.navigation.safeargs")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -50,6 +51,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.glide)
     implementation(libs.gson)
     implementation(libs.koin)
@@ -64,4 +67,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
 
     annotationProcessor(libs.glide.compiler)
+
+    ksp(libs.androidx.room.compiler)
 }

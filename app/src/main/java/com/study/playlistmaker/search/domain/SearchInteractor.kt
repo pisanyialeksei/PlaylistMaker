@@ -10,4 +10,5 @@ interface SearchInteractor {
     fun searchTracks(query: String): Flow<List<Track>?>
     fun addTrackToHistory(track: Track)
     fun clearHistory()
+    suspend fun getFavoriteTrackIds(): List<Long>
 }

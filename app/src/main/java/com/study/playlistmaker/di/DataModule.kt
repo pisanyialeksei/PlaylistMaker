@@ -3,7 +3,9 @@ package com.study.playlistmaker.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
+import com.study.playlistmaker.data.db.AppDatabase
 import com.study.playlistmaker.search.data.network.ItunesSearchApiService
 import com.study.playlistmaker.search.data.network.NetworkClient
 import com.study.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -51,5 +53,10 @@ val dataModule = module {
 
     single<Gson> {
         Gson()
+    }
+
+    single<AppDatabase> {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 }

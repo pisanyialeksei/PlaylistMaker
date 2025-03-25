@@ -81,6 +81,33 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         trackClickDebouncer(track)
     }
 
+    fun updateFavoritesStatus() {
+        val currentState = _searchState.value
+
+        if (currentState is SearchState.Content) {
+            viewModelScope.launch {
+                val favoriteIds = searchInteractor.getFavoriteTrackIds()
+                val updatedTracks = currentState.tracks.map { track ->
+                    track.apply {
+                        isFavorite = favoriteIds.contains(track.trackId)
+                    }
+                }
+
+                _searchState.postValue(SearchState.Content(updatedTracks))
+            }
+        } else if (currentState is SearchState.History) {
+            viewModelScope.launch {
+                val favoriteIds = searchInteractor.getFavoriteTrackIds()
+                val updatedTracks = currentState.tracks.map { track ->
+                    track.apply {
+                        isFavorite = favoriteIds.contains(track.trackId)
+                    }
+                }
+                _searchState.postValue(SearchState.History(updatedTracks))
+            }
+        }
+    }
+
     private fun clearSearch() {
         if (searchInteractor.currentHistory.isNotEmpty()) {
             showHistory()
@@ -91,6 +118,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private fun showHistory() {
         _searchState.value = SearchState.History(searchInteractor.currentHistory)
+        updateFavoritesStatus()
     }
 
     private fun performSearchRequest(query: String) {

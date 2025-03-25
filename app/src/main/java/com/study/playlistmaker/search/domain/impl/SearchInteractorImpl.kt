@@ -21,4 +21,8 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
     override fun clearHistory() {
         repository.clearHistory()
     }
+
+    override suspend fun getFavoriteTrackIds(): List<Long> {
+        return repository.getFavoriteTrackIds()
+    }
 }
