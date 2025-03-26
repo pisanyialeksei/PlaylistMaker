@@ -8,4 +8,5 @@ data class PlayerScreenState(
     val currentPosition: Int,
     val isPlayButtonEnabled: Boolean,
     val playButtonBackground: Int,
+    val isFavorite: Boolean,
 )

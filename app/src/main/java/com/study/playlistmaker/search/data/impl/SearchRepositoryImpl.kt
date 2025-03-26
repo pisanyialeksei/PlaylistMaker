@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.study.playlistmaker.data.db.AppDatabase
 import com.study.playlistmaker.search.data.dto.SearchRequest
 import com.study.playlistmaker.search.data.dto.SearchResponse
 import com.study.playlistmaker.search.data.network.NetworkClient
@@ -17,6 +18,7 @@ class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val sharedPreferences: SharedPreferences,
     private val gson: Gson,
+    private val appDatabase: AppDatabase,
 ) : SearchRepository, KoinComponent {
 
     private val historyKey = "SEARCH_HISTORY"
@@ -27,6 +29,7 @@ class SearchRepositoryImpl(
     override fun searchTracks(query: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(SearchRequest(query))
         if (response.resultCode == 200) {
+            val favorites = appDatabase.trackDao().getAllTrackIds()
             emit(
                 (response as? SearchResponse)?.results?.map {
                     Track(
@@ -40,7 +43,9 @@ class SearchRepositoryImpl(
                         it.primaryGenreName,
                         it.country,
                         it.previewUrl
-                    )
+                    ).apply {
+                        isFavorite = favorites.contains(it.trackId)
+                    }
                 } ?: emptyList()
             )
         } else {
@@ -65,6 +70,10 @@ class SearchRepositoryImpl(
         sharedPreferences.edit {
             remove(historyKey)
         }
+    }
+
+    override suspend fun getFavoriteTrackIds(): List<Long> {
+        return appDatabase.trackDao().getAllTrackIds()
     }
 
     private fun getHistory(): MutableList<Track> {

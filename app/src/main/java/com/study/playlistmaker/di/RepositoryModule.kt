@@ -1,5 +1,8 @@
 package com.study.playlistmaker.di
 
+import com.study.playlistmaker.data.db.TrackDbConverter
+import com.study.playlistmaker.library.data.impl.FavoritesRepositoryImpl
+import com.study.playlistmaker.library.domain.FavoritesRepository
 import com.study.playlistmaker.player.data.impl.PlayerRepositoryImpl
 import com.study.playlistmaker.player.domain.PlayerRepository
 import com.study.playlistmaker.search.data.impl.SearchRepositoryImpl
@@ -15,7 +18,8 @@ val repositoryModule = module {
         SearchRepositoryImpl(
             networkClient = get(),
             sharedPreferences = get(),
-            gson = get()
+            gson = get(),
+            appDatabase = get(),
         )
     }
 
@@ -25,5 +29,16 @@ val repositoryModule = module {
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(sharedPreferences = get(), resources = androidContext().resources)
+    }
+
+    factory<TrackDbConverter> {
+        TrackDbConverter()
+    }
+
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(
+            appDatabase = get(),
+            trackDbConverter = get(),
+        )
     }
 }
