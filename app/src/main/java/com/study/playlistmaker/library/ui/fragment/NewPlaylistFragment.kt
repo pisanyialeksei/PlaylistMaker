@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
@@ -53,8 +55,17 @@ class NewPlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            handleBackNavigation()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleBackNavigation()
+                }
+            }
+        )
 
         binding.playlistNameTextInputLayout.editText?.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
@@ -98,5 +109,25 @@ class NewPlaylistFragment : Fragment() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+    }
+
+    private fun handleBackNavigation() {
+        if (coverImageUri != null
+            || binding.playlistNameTextInputLayout.editText?.text.toString().isNotEmpty()
+            || binding.playlistDescriptionTextInputLayout.editText?.text.toString().isNotEmpty()
+        ) {
+            MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
+                .setTitle(stringProvider.getString(R.string.new_playlist_cancellation_title))
+                .setMessage(stringProvider.getString(R.string.new_playlist_cancellation_message))
+                .setNegativeButton(stringProvider.getString(R.string.new_playlist_cancellation_negative_button)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(stringProvider.getString(R.string.new_playlist_cancellation_positive_button)) { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .show()
+        } else {
+            findNavController().navigateUp()
+        }
     }
 }

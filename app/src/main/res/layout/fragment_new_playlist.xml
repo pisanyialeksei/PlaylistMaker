@@ -48,7 +48,10 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/playlist_name_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,7 +67,10 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/playlist_description_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

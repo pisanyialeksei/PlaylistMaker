@@ -31,4 +31,8 @@
     <string name="playlist_description_hint">Описание</string>
     <string name="new_playlist_create">Создать</string>
     <string name="no_image_toast">Изображение не выбрано</string>
+    <string name="new_playlist_cancellation_title">Завершить создание плейлиста?</string>
+    <string name="new_playlist_cancellation_message">Все несохраненные данные будут потеряны</string>
+    <string name="new_playlist_cancellation_negative_button">Отмена</string>
+    <string name="new_playlist_cancellation_positive_button">Завершить</string>
 </resources>
