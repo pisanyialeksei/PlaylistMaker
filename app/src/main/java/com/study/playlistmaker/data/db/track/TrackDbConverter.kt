@@ -1,4 +1,4 @@
-package com.study.playlistmaker.data.db
+package com.study.playlistmaker.data.db.track
 
 import com.study.playlistmaker.search.domain.model.Track
 

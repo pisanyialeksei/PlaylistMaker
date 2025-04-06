@@ -1,4 +1,4 @@
-package com.study.playlistmaker.data.db
+package com.study.playlistmaker.data.db.track
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface TrackDao {
+interface TracksDao {
 
     @Insert
     suspend fun insertTrack(trackEntity: TrackEntity)

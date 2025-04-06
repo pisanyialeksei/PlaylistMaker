@@ -14,7 +14,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.study.playlistmaker.R
@@ -22,6 +21,7 @@ import com.study.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
 import com.study.playlistmaker.sharing.data.StringProvider
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
@@ -29,7 +29,7 @@ class NewPlaylistFragment : Fragment() {
 
     private lateinit var binding: FragmentNewPlaylistBinding
 
-    private val viewModel: NewPlaylistViewModel by viewModels()
+    private val viewModel: NewPlaylistViewModel by viewModel()
     private val stringProvider: StringProvider by inject()
 
     private var coverImageUri: Uri? = null
@@ -54,10 +54,6 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbar.setNavigationOnClickListener {
-            handleBackNavigation()
-        }
-
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -66,6 +62,18 @@ class NewPlaylistFragment : Fragment() {
                 }
             }
         )
+
+        viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            binding.newPlaylistCreateButton.isEnabled = isEnabled
+        }
+
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        binding.toolbar.setNavigationOnClickListener {
+            handleBackNavigation()
+        }
 
         binding.playlistNameTextInputLayout.editText?.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
@@ -77,35 +85,40 @@ class NewPlaylistFragment : Fragment() {
             visualMediaPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            binding.newPlaylistCreateButton.isEnabled = isEnabled
-        }
-
         binding.newPlaylistCreateButton.setOnClickListener {
-            coverImageUri?.let { uri ->
-                saveImageToPrivateStorage(uri)
+            val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
+            val coverPath = coverImageUri?.let {
+                val file = getCoverFile()
+                saveImageToPrivateStorage(coverImageUri!!, file)
+                file.absolutePath
             }
 
-            val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
-
-            // TODO
+            viewModel.createPlaylist(
+                name = playlistName,
+                description = binding.playlistDescriptionTextInputLayout.editText?.text.toString(),
+                coverPath = coverPath
+            )
 
             findNavController().navigateUp()
             Toast.makeText(context, stringProvider.getString(R.string.playlist_created, playlistName), Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri) {
+    private fun getCoverFile(): File {
         val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
         val fileName = "playlist_${playlistName.replace(" ", "_").lowercase()}.jpg"
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlists")
-        if (!filePath.exists()) {
-            filePath.mkdirs()
+        val directoryPath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlists")
+
+        if (!directoryPath.exists()) {
+            directoryPath.mkdirs()
         }
 
-        val file = File(filePath, fileName)
+        return File(directoryPath, fileName)
+    }
+
+    private fun saveImageToPrivateStorage(uri: Uri, outputFile: File) {
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
+        val outputStream = FileOutputStream(outputFile)
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
