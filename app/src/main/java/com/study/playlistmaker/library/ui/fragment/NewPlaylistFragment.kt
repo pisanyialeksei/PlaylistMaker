@@ -1,23 +1,44 @@
 package com.study.playlistmaker.library.ui.fragment
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
+import com.study.playlistmaker.sharing.data.StringProvider
+import org.koin.android.ext.android.inject
+import java.io.File
+import java.io.FileOutputStream
 
 class NewPlaylistFragment : Fragment() {
 
     private lateinit var binding: FragmentNewPlaylistBinding
 
     private val viewModel: NewPlaylistViewModel by viewModels()
+    private val stringProvider: StringProvider by inject()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var coverImageUri: Uri? = null
+
+    private val visualMediaPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            coverImageUri = uri
+            binding.playlistCoverImageView.setImageURI(uri)
+        } else {
+            Toast.makeText(context, stringProvider.getString(R.string.no_image_toast), Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreateView(
@@ -34,5 +55,48 @@ class NewPlaylistFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+
+        binding.playlistNameTextInputLayout.editText?.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.onNameInputTextChanged(text.toString())
+            }
+        )
+
+        binding.playlistCoverImageView.setOnClickListener {
+            visualMediaPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            binding.newPlaylistCreateButton.isEnabled = isEnabled
+        }
+
+        binding.newPlaylistCreateButton.setOnClickListener {
+            coverImageUri?.let { uri ->
+                saveImageToPrivateStorage(uri)
+            }
+
+            val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
+
+            // TODO
+
+            findNavController().navigateUp()
+            Toast.makeText(context, "Playlist $playlistName created", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveImageToPrivateStorage(uri: Uri) {
+        val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
+        val fileName = "playlist_${playlistName.replace(" ", "_").lowercase()}.jpg"
+        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlists")
+        if (!filePath.exists()) {
+            filePath.mkdirs()
+        }
+
+        val file = File(filePath, fileName)
+        val inputStream = requireActivity().contentResolver.openInputStream(uri)
+        val outputStream = FileOutputStream(file)
+        BitmapFactory
+            .decodeStream(inputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 }
