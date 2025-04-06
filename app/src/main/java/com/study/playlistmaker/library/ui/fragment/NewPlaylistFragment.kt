@@ -91,7 +91,7 @@ class NewPlaylistFragment : Fragment() {
             // TODO
 
             findNavController().navigateUp()
-            Toast.makeText(context, "Playlist $playlistName created", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, stringProvider.getString(R.string.playlist_created, playlistName), Toast.LENGTH_SHORT).show()
         }
     }
 
