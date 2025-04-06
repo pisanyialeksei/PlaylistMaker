@@ -25,4 +25,7 @@
     <string name="new_playlist">New playlist</string>
     <string name="empty_favorites_label">Your library is empty</string>
     <string name="empty_playlist_label">You haven\'t\ncreated any playlists</string>
+    <string name="playlist_name_hint">Name*</string>
+    <string name="playlist_description_hint">Description</string>
+    <string name="new_playlist_create">Create</string>
 </resources>
