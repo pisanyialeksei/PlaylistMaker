@@ -100,7 +100,7 @@ class NewPlaylistFragment : Fragment() {
             )
 
             findNavController().navigateUp()
-            Toast.makeText(context, stringProvider.getString(R.string.playlist_created, playlistName), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), requireContext().getString(R.string.playlist_created, playlistName), Toast.LENGTH_SHORT).show()
         }
     }
 

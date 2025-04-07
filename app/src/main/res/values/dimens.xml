@@ -14,5 +14,4 @@
     <dimen name="list_secondary_view_text_size">19sp</dimen>
     <dimen name="list_secondary_view_text_margin_top">16dp</dimen>
     <dimen name="player_info_item_height">32sp</dimen>
-    <dimen name="library_empty_list_margin_top">106dp</dimen>
 </resources>

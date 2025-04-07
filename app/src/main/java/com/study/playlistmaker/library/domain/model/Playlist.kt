@@ -5,5 +5,5 @@ data class Playlist(
     val description: String,
     val cover: String? = null,
     val tracks: String? = null,
-    val tracksCount: Int? = null,
+    val tracksCount: Int = 0,
 )
