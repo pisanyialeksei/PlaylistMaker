@@ -2,11 +2,14 @@ package com.study.playlistmaker.player.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.ActivityPlayerBinding
@@ -22,6 +25,7 @@ import org.koin.core.parameter.parametersOf
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
+    private lateinit var playlistBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val gson: Gson by inject()
     private val playerViewModel: PlayerViewModel by viewModel {
@@ -41,6 +45,26 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.screenState.observe(this) {
             render(it)
         }
+
+        playlistBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        playlistBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                    }
+                    else -> {
+                        binding.overlay.isVisible = true
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
     }
 
     override fun onPause() {
@@ -62,6 +86,12 @@ class PlayerActivity : AppCompatActivity() {
         }
         binding.addToFavoritesButton.setOnClickListener {
             playerViewModel.onFavoriteClicked()
+        }
+        binding.addToPlaylistButton.setOnClickListener {
+            playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
+        binding.overlay.setOnClickListener {
+            playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
