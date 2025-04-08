@@ -1,18 +1,21 @@
-package com.study.playlistmaker.player.ui.activity
+package com.study.playlistmaker.player.ui.fragment
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.study.playlistmaker.R
-import com.study.playlistmaker.databinding.ActivityPlayerBinding
+import com.study.playlistmaker.databinding.FragmentPlayerBinding
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
 import com.study.playlistmaker.player.ui.model.PlayerTrack
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -22,27 +25,34 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
-    private lateinit var binding: ActivityPlayerBinding
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var playlistBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val gson: Gson by inject()
+    private val args: PlayerFragmentArgs by navArgs()
     private val playerViewModel: PlayerViewModel by viewModel {
-        parametersOf(
-            getTrackFromIntent(intent)
-        )
+        parametersOf(getTrackFromJson(args.track))
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupListeners()
 
-        playerViewModel.screenState.observe(this) {
+        playerViewModel.screenState.observe(viewLifecycleOwner) {
             render(it)
         }
 
@@ -51,7 +61,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         playlistBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
@@ -72,6 +81,11 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.onPause()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         playerViewModel.onDestroy()
@@ -79,7 +93,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.toolbar.setNavigationOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
         binding.playPauseButton.setOnClickListener {
             playerViewModel.togglePlayback()
@@ -92,6 +106,9 @@ class PlayerActivity : AppCompatActivity() {
         }
         binding.overlay.setOnClickListener {
             playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        binding.newPlaylistButton.setOnClickListener {
+            findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
     }
 
@@ -108,10 +125,13 @@ class PlayerActivity : AppCompatActivity() {
                 binding.addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_disabled)
             }
 
-            Glide.with(this@PlayerActivity)
+            Glide.with(requireContext())
                 .load(state.track.getCoverArtwork())
                 .placeholder(R.drawable.track_artwork_player_placeholder)
-                .transform(CenterCrop(), RoundedCorners(2f.dpToPx(this@PlayerActivity)))
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(2f.dpToPx(requireContext()))
+                )
                 .into(cover)
 
             val isAlbumAvailable = state.track.collectionName != null
@@ -127,16 +147,7 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTrackFromIntent(intent: Intent): PlayerTrack {
-        val trackJson = intent.getStringExtra(TRACK_EXTRA)
+    private fun getTrackFromJson(trackJson: String): PlayerTrack {
         return gson.fromJson(trackJson, PlayerTrack::class.java)
-    }
-
-    companion object {
-
-        /**
-         * Argument name in [R.navigation.main_navigation_graph]
-         */
-        private const val TRACK_EXTRA = "track"
     }
 }

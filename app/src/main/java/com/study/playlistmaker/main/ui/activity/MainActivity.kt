@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.newPlaylistFragment) {
+            if (destination.id == R.id.newPlaylistFragment || destination.id == R.id.playerFragment) {
                 binding.bottomNavigationView.animate()
                     .alpha(0f)
                     .setDuration(300)
