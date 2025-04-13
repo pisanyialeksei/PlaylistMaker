@@ -16,11 +16,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.FragmentPlayerBinding
+import com.study.playlistmaker.library.ui.view_model.PlaylistsViewModel
+import com.study.playlistmaker.player.ui.adapter.PlaylistsBottomSheetAdapter
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
 import com.study.playlistmaker.player.ui.model.PlayerTrack
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.study.playlistmaker.utils.dpToPx
 import com.study.playlistmaker.utils.formatMsToDuration
+import com.study.playlistmaker.utils.showToast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -30,6 +33,7 @@ class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var playlistsAdapter: PlaylistsBottomSheetAdapter
     private lateinit var playlistBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val gson: Gson by inject()
@@ -37,6 +41,7 @@ class PlayerFragment : Fragment() {
     private val playerViewModel: PlayerViewModel by viewModel {
         parametersOf(getTrackFromJson(args.track))
     }
+    private val playlistsViewModel: PlaylistsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +59,26 @@ class PlayerFragment : Fragment() {
 
         playerViewModel.screenState.observe(viewLifecycleOwner) {
             render(it)
+        }
+
+        playlistsAdapter = PlaylistsBottomSheetAdapter(
+            playlists = mutableListOf(),
+            onPlaylistClickListener = { playlist ->
+                playerViewModel.addTrackToPlaylist(playlist).observe(viewLifecycleOwner) { trackAlreadyAdded ->
+                    if (trackAlreadyAdded) {
+                        showToast(requireContext(), requireContext().getString(R.string.track_contains_in_playlist, playlist.name))
+                    } else {
+                        showToast(requireContext(), requireContext().getString(R.string.track_added_to_playlist, playlist.name))
+                        playlistsViewModel.getPlaylists()
+                    }
+                }
+                playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        )
+        binding.playlistsRecyclerView.adapter = playlistsAdapter
+
+        playlistsViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
+            playlistsAdapter.updateData(playlists)
         }
 
         playlistBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
@@ -74,6 +99,12 @@ class PlayerFragment : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        playlistsViewModel.getPlaylists()
     }
 
     override fun onPause() {

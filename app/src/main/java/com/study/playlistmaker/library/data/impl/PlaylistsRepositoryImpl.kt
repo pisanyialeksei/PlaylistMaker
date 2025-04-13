@@ -27,4 +27,31 @@ class PlaylistsRepositoryImpl(
         }
         emit(playlists)
     }
+
+    override suspend fun addTrackToPlaylist(trackId: Long, playlistId: Long): Boolean {
+        val playlists = appDatabase.playlistDao().getPlaylists()
+        val playlist = playlists.find { it.playlistId == playlistId }
+            ?: error("Playlist not found")
+
+        val trackIds = if (playlist.tracks.isNullOrEmpty()) {
+            mutableListOf()
+        } else {
+            playlist.tracks.split(",").map { it.trim().toLong() }.toMutableList()
+        }
+
+        val isTrackContains = trackIds.contains(trackId)
+
+        if (!isTrackContains) {
+            trackIds.add(trackId)
+
+            val updatedPlaylist = playlist.copy(
+                tracks = trackIds.joinToString(","),
+                tracksCount = playlist.tracksCount + 1
+            )
+
+            appDatabase.playlistDao().updatePlaylist(updatedPlaylist)
+        }
+
+        return isTrackContains
+    }
 }

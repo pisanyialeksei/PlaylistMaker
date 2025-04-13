@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.study.playlistmaker.R
 import com.study.playlistmaker.library.domain.FavoritesInteractor
+import com.study.playlistmaker.library.domain.PlaylistsInteractor
+import com.study.playlistmaker.library.domain.model.Playlist
 import com.study.playlistmaker.player.domain.PlayerInteractor
 import com.study.playlistmaker.player.domain.model.PlayerState
 import com.study.playlistmaker.player.ui.model.PlayerScreenState
@@ -18,7 +20,8 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor,
-    track: PlayerTrack,
+    private val playlistsInteractor: PlaylistsInteractor,
+    private val track: PlayerTrack,
 ) : ViewModel() {
 
     private val _screenState = MutableLiveData<PlayerScreenState>()
@@ -89,6 +92,17 @@ class PlayerViewModel(
                 updateState(isFavorite = true)
             }
         }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist): LiveData<Boolean> {
+        val result = MutableLiveData<Boolean>()
+
+        viewModelScope.launch {
+            val trackAlreadyAdded = playlistsInteractor.addTrackToPlaylist(track.trackId, playlist.playlistId)
+            result.postValue(trackAlreadyAdded)
+        }
+
+        return result
     }
 
     private fun prepareTrack(track: PlayerTrack) {

@@ -2,6 +2,7 @@ package com.study.playlistmaker.utils
 
 import android.content.Context
 import android.util.TypedValue
+import android.widget.Toast
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -15,4 +16,8 @@ fun Float.dpToPx(context: Context): Int {
         this,
         context.resources.displayMetrics
     ).toInt()
+}
+
+fun showToast(context: Context?, message: String, length: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(context, message, length).show()
 }

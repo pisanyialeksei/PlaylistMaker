@@ -8,7 +8,6 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +19,7 @@ import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
 import com.study.playlistmaker.sharing.data.StringProvider
+import com.study.playlistmaker.utils.showToast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -39,7 +39,7 @@ class NewPlaylistFragment : Fragment() {
             coverImageUri = uri
             binding.playlistCoverImageView.setImageURI(uri)
         } else {
-            Toast.makeText(context, stringProvider.getString(R.string.no_image_toast), Toast.LENGTH_SHORT).show()
+            showToast(requireContext(), stringProvider.getString(R.string.no_image_toast))
         }
     }
 
@@ -100,7 +100,7 @@ class NewPlaylistFragment : Fragment() {
             )
 
             findNavController().navigateUp()
-            Toast.makeText(requireContext(), requireContext().getString(R.string.playlist_created, playlistName), Toast.LENGTH_SHORT).show()
+            showToast(requireContext(), stringProvider.getString(R.string.playlist_created, playlistName))
         }
     }
 
