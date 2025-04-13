@@ -39,7 +39,9 @@ class PlayerFragment : Fragment() {
     private val gson: Gson by inject()
     private val args: PlayerFragmentArgs by navArgs()
     private val playerViewModel: PlayerViewModel by viewModel {
-        parametersOf(getTrackFromJson(args.track))
+        parametersOf(
+            gson.fromJson(args.track, PlayerTrack::class.java)
+        )
     }
     private val playlistsViewModel: PlaylistsViewModel by viewModel()
 
@@ -83,22 +85,22 @@ class PlayerFragment : Fragment() {
 
         playlistBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
-        }
-
-        playlistBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.isVisible = false
-                    }
-                    else -> {
-                        binding.overlay.isVisible = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.isVisible = false
+                        }
+                        else -> {
+                            binding.overlay.isVisible = true
+                        }
                     }
                 }
-            }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            })
+        }
+
     }
 
     override fun onResume() {
@@ -133,7 +135,7 @@ class PlayerFragment : Fragment() {
             playerViewModel.onFavoriteClicked()
         }
         binding.addToPlaylistButton.setOnClickListener {
-            playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         binding.overlay.setOnClickListener {
             playlistBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -151,9 +153,9 @@ class PlayerFragment : Fragment() {
             durationValue.text = formatMsToDuration(state.track.trackTimeMillis)
 
             if (state.isFavorite) {
-                binding.addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_enabled)
+                addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_enabled)
             } else {
-                binding.addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_disabled)
+                addToFavoritesButton.setImageResource(R.drawable.ic_add_to_favorites_disabled)
             }
 
             Glide.with(requireContext())
@@ -176,9 +178,5 @@ class PlayerFragment : Fragment() {
             playPauseButton.isEnabled = state.isPlayButtonEnabled
             playPauseButton.setBackgroundResource(state.playButtonBackground)
         }
-    }
-
-    private fun getTrackFromJson(trackJson: String): PlayerTrack {
-        return gson.fromJson(trackJson, PlayerTrack::class.java)
     }
 }

@@ -29,7 +29,7 @@
         android:fontFamily="@font/ys_display_regular"
         android:maxLines="1"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="16sp"
+        android:textSize="@dimen/regular_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/bottom_sheet_playlist_item_cover"
         app:layout_constraintTop_toTopOf="parent"

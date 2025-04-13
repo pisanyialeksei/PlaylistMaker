@@ -47,8 +47,10 @@ class TracksAdapter(
             Glide.with(context)
                 .load(model.artworkUrl100)
                 .placeholder(R.drawable.track_artwork_list_placeholder)
-                .transform(CenterCrop())
-                .transform(RoundedCorners(2f.dpToPx(context)))
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(2f.dpToPx(context))
+                )
                 .into(binding.tracksItemArtwork)
 
             binding.tracksItemName.text = model.trackName

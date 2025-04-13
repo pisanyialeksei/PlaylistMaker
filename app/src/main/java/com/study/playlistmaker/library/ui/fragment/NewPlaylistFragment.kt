@@ -8,17 +8,22 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.study.playlistmaker.R
 import com.study.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
 import com.study.playlistmaker.sharing.data.StringProvider
+import com.study.playlistmaker.utils.dpToPx
 import com.study.playlistmaker.utils.showToast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,7 +42,13 @@ class NewPlaylistFragment : Fragment() {
     private val visualMediaPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             coverImageUri = uri
-            binding.playlistCoverImageView.setImageURI(uri)
+            Glide.with(requireContext())
+                .load(uri)
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(8f.dpToPx(requireContext()))
+                )
+                .into(binding.playlistCoverImageView)
         } else {
             showToast(requireContext(), stringProvider.getString(R.string.no_image_toast))
         }
@@ -68,6 +79,16 @@ class NewPlaylistFragment : Fragment() {
         }
 
         setupListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }
 
     private fun setupListeners() {
