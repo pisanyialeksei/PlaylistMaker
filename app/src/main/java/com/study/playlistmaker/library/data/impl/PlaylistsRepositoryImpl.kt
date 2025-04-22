@@ -30,6 +30,12 @@ class PlaylistsRepositoryImpl(
         emit(playlists)
     }
 
+    override suspend fun getPlaylistById(playlistId: Long): Flow<Playlist> = flow {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val playlist = playlistDbConverter.map(playlistEntity)
+        emit(playlist)
+    }
+
     override suspend fun addTrackToPlaylist(trackId: Long, playlistId: Long): Boolean {
         val playlists = appDatabase.playlistDao().getPlaylists()
         val playlist = playlists.find { it.playlistId == playlistId }

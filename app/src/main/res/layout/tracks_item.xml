@@ -43,7 +43,7 @@
             android:layout_height="13dp"
             android:layout_marginTop="@dimen/search_item_subtitle_margin_top"
             android:scaleType="center"
-            android:src="@drawable/separator_dot"
+            android:src="@drawable/ic_separator_dot"
             app:tint="?attr/colorSecondary" />
 
         <TextView

@@ -39,7 +39,13 @@ class PlaylistsFragment : Fragment() {
             findNavController().navigate(R.id.action_libraryFragment_to_newPlaylistFragment)
         }
 
-        playlistsAdapter = PlaylistsAdapter(mutableListOf())
+        playlistsAdapter = PlaylistsAdapter(
+            playlists = mutableListOf(),
+            clickListener = { playlist ->
+                val navDirection = LibraryFragmentDirections.actionLibraryFragmentToPlaylistFragment(playlist.playlistId)
+                findNavController().navigate(navDirection)
+            }
+        )
         binding.playlistsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistsRecyclerView.adapter = playlistsAdapter
 

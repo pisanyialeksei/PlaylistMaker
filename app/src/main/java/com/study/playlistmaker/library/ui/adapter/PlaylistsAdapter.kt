@@ -11,7 +11,10 @@ import com.study.playlistmaker.databinding.PlaylistsItemBinding
 import com.study.playlistmaker.library.domain.model.Playlist
 import com.study.playlistmaker.utils.dpToPx
 
-class PlaylistsAdapter(private val playlists: MutableList<Playlist>) : RecyclerView.Adapter<PlaylistsAdapter.PlaylistsViewHolder>() {
+class PlaylistsAdapter(
+    private val playlists: MutableList<Playlist>,
+    private val clickListener: (Playlist) -> Unit,
+) : RecyclerView.Adapter<PlaylistsAdapter.PlaylistsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -32,7 +35,7 @@ class PlaylistsAdapter(private val playlists: MutableList<Playlist>) : RecyclerV
         notifyDataSetChanged()
     }
 
-    class PlaylistsViewHolder(private val binding: PlaylistsItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PlaylistsViewHolder(private val binding: PlaylistsItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: Playlist) {
             val context = itemView.context
@@ -51,6 +54,10 @@ class PlaylistsAdapter(private val playlists: MutableList<Playlist>) : RecyclerV
                 model.tracksCount,
                 model.tracksCount
             )
+
+            itemView.setOnClickListener {
+                clickListener.invoke(model)
+            }
         }
     }
 }
