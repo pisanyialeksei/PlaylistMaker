@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".library.ui.fragment.FavoritesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,7 @@
         android:id="@+id/empty_favorites_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/library_empty_list_margin_top"
+        android:layout_marginTop="106dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone">
@@ -37,4 +38,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

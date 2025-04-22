@@ -81,7 +81,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun navigateToPlayer(track: Track) {
-        val navDirection = LibraryFragmentDirections.actionLibraryFragmentToPlayerActivity(
+        val navDirection = LibraryFragmentDirections.actionLibraryFragmentToPlayerFragment(
             gson.toJson(track.toUiTrack())
         )
         findNavController().navigate(navDirection)

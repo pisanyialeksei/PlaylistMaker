@@ -1,6 +1,7 @@
 package com.study.playlistmaker.di
 
 import com.study.playlistmaker.library.ui.view_model.FavoritesViewModel
+import com.study.playlistmaker.library.ui.view_model.NewPlaylistViewModel
 import com.study.playlistmaker.library.ui.view_model.PlaylistsViewModel
 import com.study.playlistmaker.player.ui.model.PlayerTrack
 import com.study.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -15,6 +16,7 @@ val viewModelModule = module {
         PlayerViewModel(
             playerInteractor = get(),
             favoritesInteractor = get(),
+            playlistsInteractor = get(),
             track = track,
         )
     }
@@ -32,6 +34,10 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlaylistsViewModel()
+        PlaylistsViewModel(playlistsInteractor = get())
+    }
+
+    viewModel {
+        NewPlaylistViewModel(playlistsInteractor = get())
     }
 }

@@ -134,7 +134,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun navigateToPlayer(track: Track) {
-        val navDirection = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(
+        val navDirection = SearchFragmentDirections.actionSearchFragmentToPlayerFragment(
             gson.toJson(track.toUiTrack())
         )
         findNavController().navigate(navDirection)

@@ -25,4 +25,20 @@
     <string name="new_playlist">New playlist</string>
     <string name="empty_favorites_label">Your library is empty</string>
     <string name="empty_playlist_label">You haven\'t\ncreated any playlists</string>
+    <string name="playlist_name_hint">Name*</string>
+    <string name="playlist_description_hint">Description</string>
+    <string name="new_playlist_create">Create</string>
+    <string name="no_image_toast">Image not selected</string>
+    <string name="new_playlist_cancellation_title">Finish playlist creation?</string>
+    <string name="new_playlist_cancellation_message">All unsaved data will be lost</string>
+    <string name="new_playlist_cancellation_negative_button">Cancel</string>
+    <string name="new_playlist_cancellation_positive_button">Finish</string>
+    <string name="playlist_created">Playlist %s created</string>
+    <plurals name="playlist_tracks_count">
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="track_added_to_playlist">Added to playlist %s</string>
+    <string name="track_contains_in_playlist">Track is already added in playlist %s</string>
 </resources>

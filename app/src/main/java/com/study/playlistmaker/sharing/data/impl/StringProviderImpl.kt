@@ -8,4 +8,8 @@ class StringProviderImpl(private val context: Context) : StringProvider {
     override fun getString(resId: Int): String {
         return context.getString(resId)
     }
+
+    override fun getString(resId: Int, vararg args: String): String {
+        return context.getString(resId, *args)
+    }
 }
