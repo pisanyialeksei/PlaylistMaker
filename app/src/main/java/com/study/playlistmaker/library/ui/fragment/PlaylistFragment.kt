@@ -77,9 +77,11 @@ class PlaylistFragment : Fragment() {
                     when (newState) {
                         BottomSheetBehavior.STATE_HIDDEN -> {
                             binding.overlay.isVisible = false
+                            tracksBottomSheetBehavior.isDraggable = true
                         }
                         else -> {
                             binding.overlay.isVisible = true
+                            tracksBottomSheetBehavior.isDraggable = false
                         }
                     }
                 }
@@ -100,11 +102,20 @@ class PlaylistFragment : Fragment() {
         }
 
         playlistViewModel.playlistTracks.observe(viewLifecycleOwner) { tracks ->
-            renderTracks(tracks)
+            if (tracks.isNullOrEmpty()) {
+                binding.emptyPlaylistTextView.isVisible = true
+                tracksBottomSheetBehavior.isDraggable = false
+            } else {
+                renderTracks(tracks)
+            }
         }
 
         playlistViewModel.playlistDuration.observe(viewLifecycleOwner) { duration ->
-            binding.playlistLength.text = duration
+            binding.playlistLength.text = resources.getQuantityString(
+                R.plurals.playlist_duration,
+                duration,
+                duration,
+            )
         }
 
         playlistViewModel.playlistDeleted.observe(viewLifecycleOwner) { isDeleted ->
@@ -191,10 +202,10 @@ class PlaylistFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
             .setTitle(getString(R.string.track_deletion_confirmation))
             .setMessage("")
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
                 playlistViewModel.removeTrackFromPlaylist(track)
                 dialog.dismiss()
             }
@@ -203,12 +214,12 @@ class PlaylistFragment : Fragment() {
 
     private fun showPlaylistDeletionDialog() {
         MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
-            .setTitle(getString(R.string.playlist_deletion_confirmation, playlistViewModel.playlist.value!!.name))
+            .setTitle(getString(R.string.playlist_deletion_confirmation))
             .setMessage("")
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
                 playlistViewModel.deletePlaylist()
                 dialog.dismiss()
             }

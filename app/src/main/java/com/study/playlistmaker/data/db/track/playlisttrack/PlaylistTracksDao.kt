@@ -11,7 +11,7 @@ import com.study.playlistmaker.data.db.track.TrackEntity
 interface PlaylistTracksDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addTrackToPlaylist(playlistTrackEntity: PlaylistTrackEntity)
+    suspend fun addTrackToPlaylist(track: PlaylistTrackEntity)
 
     @Query("DELETE FROM playlist_tracks WHERE playlistId = :playlistId AND trackId = :trackId")
     suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Long)
@@ -31,12 +31,12 @@ interface PlaylistTracksDao {
     @Transaction
     @Query(
         """
-        SELECT t.* 
-        FROM tracks t
-        JOIN playlist_tracks pt ON t.trackId = pt.trackId
-        WHERE pt.playlistId = :playlistId
-        ORDER BY pt.timestamp DESC
-    """
+            SELECT tracks.*
+            FROM tracks
+            JOIN playlist_tracks ON tracks.trackId = playlist_tracks.trackId
+            WHERE playlist_tracks.playlistId = :playlistId
+            ORDER BY playlist_tracks.timestamp DESC
+        """
     )
     suspend fun getTracksInPlaylist(playlistId: Long): List<TrackEntity>
 }

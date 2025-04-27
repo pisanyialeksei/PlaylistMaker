@@ -19,20 +19,17 @@ interface FavoritesDao {
     @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE trackId = :trackId)")
     suspend fun isTrackFavorite(trackId: Long): Boolean
 
-    @Query("SELECT trackId FROM favorites")
-    suspend fun getAllFavoriteTrackIds(): List<Long>
-
     @Query("SELECT trackId FROM favorites ORDER BY timestamp DESC")
     suspend fun getFavoriteTrackIds(): List<Long>
 
     @Transaction
     @Query(
         """
-        SELECT t.* 
-        FROM tracks t
-        JOIN favorites ft ON t.trackId = ft.trackId
-        ORDER BY ft.timestamp DESC
-    """
+            SELECT tracks.*
+            FROM tracks
+            JOIN favorites ON tracks.trackId = favorites.trackId
+            ORDER BY favorites.timestamp DESC
+        """
     )
     suspend fun getFavoriteTracks(): List<TrackEntity>
 }

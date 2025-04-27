@@ -22,8 +22,8 @@ class PlaylistViewModel(
     private val _playlistTracks = MutableLiveData<List<Track>>()
     val playlistTracks: LiveData<List<Track>> = _playlistTracks
 
-    private val _playlistDuration = MutableLiveData<String>()
-    val playlistDuration: LiveData<String> = _playlistDuration
+    private val _playlistDuration = MutableLiveData<Int>()
+    val playlistDuration: LiveData<Int> = _playlistDuration
 
     private val _playlistDeleted = MutableLiveData<Boolean>()
     val playlistDeleted: LiveData<Boolean> = _playlistDeleted
@@ -47,7 +47,7 @@ class PlaylistViewModel(
             playlistsInteractor.getTracksInPlaylist(playlistId)
                 .collect { tracks ->
                     _playlistTracks.value = tracks
-                    getPlaylistDuration(tracks)
+                    setPlaylistDuration(tracks)
                 }
         }
     }
@@ -71,8 +71,8 @@ class PlaylistViewModel(
         }
     }
 
-    private fun getPlaylistDuration(tracks: List<Track>) {
+    private fun setPlaylistDuration(tracks: List<Track>) {
         val totalMillis = tracks.sumOf { it.trackTimeMillis }
-        _playlistDuration.value = SimpleDateFormat("mm", Locale.getDefault()).format(totalMillis)
+        _playlistDuration.value = SimpleDateFormat("mm", Locale.getDefault()).format(totalMillis).toInt()
     }
 }

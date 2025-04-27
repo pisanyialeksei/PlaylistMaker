@@ -123,7 +123,7 @@ open class NewPlaylistFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
                 .setTitle(stringProvider.getString(R.string.new_playlist_cancellation_title))
                 .setMessage(stringProvider.getString(R.string.new_playlist_cancellation_message))
-                .setNegativeButton(stringProvider.getString(R.string.new_playlist_cancellation_negative_button)) { dialog, _ ->
+                .setNegativeButton(stringProvider.getString(R.string.cancel)) { dialog, _ ->
                     dialog.cancel()
                 }
                 .setPositiveButton(stringProvider.getString(R.string.new_playlist_cancellation_positive_button)) { _, _ ->
