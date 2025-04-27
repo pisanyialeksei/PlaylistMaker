@@ -19,6 +19,8 @@ import com.study.playlistmaker.library.domain.model.Playlist
 import com.study.playlistmaker.library.ui.view_model.PlaylistViewModel
 import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.ui.adapter.TracksAdapter
+import com.study.playlistmaker.utils.formatMsToDuration
+import com.study.playlistmaker.utils.showToast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -111,6 +113,27 @@ class PlaylistFragment : Fragment() {
     private fun setupClickListeners() {
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.playlistShareButton.setOnClickListener {
+            val tracks = playlistViewModel.playlistTracks.value
+
+            if (tracks.isNullOrEmpty()) {
+                showToast(requireContext(), requireContext().getString(R.string.empty_playlist_toast))
+            } else {
+                val trackListText = tracks.mapIndexed { index, track ->
+                    "${index + 1}. ${track.artistName} - ${track.trackName} (${formatMsToDuration(track.trackTimeMillis)})"
+                }.joinToString("\n")
+
+                val intentText = """
+                    ${binding.playlistName.text}
+                    ${binding.playlistDescription.text}
+                    ${binding.playlistCount.text}:
+                    $trackListText
+                    """.trimIndent()
+
+                playlistViewModel.sharePlaylist(intentText)
+            }
         }
     }
 

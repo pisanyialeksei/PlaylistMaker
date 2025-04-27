@@ -37,6 +37,6 @@ val interactorModule = module {
     }
 
     single<PlaylistsInteractor> {
-        PlaylistsInteractorImpl(repository = get())
+        PlaylistsInteractorImpl(repository = get(), externalNavigator = get())
     }
 }

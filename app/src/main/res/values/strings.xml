@@ -48,4 +48,5 @@
     <string name="track_deletion_confirmation">Хотите удалить трек?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="empty_playlist_toast">Плейлист пуст</string>
 </resources>

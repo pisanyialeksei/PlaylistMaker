@@ -4,9 +4,13 @@ import com.study.playlistmaker.library.domain.PlaylistsInteractor
 import com.study.playlistmaker.library.domain.PlaylistsRepository
 import com.study.playlistmaker.library.domain.model.Playlist
 import com.study.playlistmaker.search.domain.model.Track
+import com.study.playlistmaker.sharing.data.ExternalNavigator
 import kotlinx.coroutines.flow.Flow
 
-class PlaylistsInteractorImpl(private val repository: PlaylistsRepository) : PlaylistsInteractor {
+class PlaylistsInteractorImpl(
+    private val repository: PlaylistsRepository,
+    private val externalNavigator: ExternalNavigator,
+) : PlaylistsInteractor {
 
     override suspend fun createPlaylist(playlist: Playlist) {
         repository.createPlaylist(playlist)
@@ -34,5 +38,9 @@ class PlaylistsInteractorImpl(private val repository: PlaylistsRepository) : Pla
 
     override suspend fun getTracksInPlaylist(playlistId: Long): Flow<List<Track>> {
         return repository.getTracksInPlaylist(playlistId)
+    }
+
+    override fun sharePlaylist(text: String) {
+        externalNavigator.share(text)
     }
 }

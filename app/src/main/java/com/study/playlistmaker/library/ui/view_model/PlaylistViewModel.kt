@@ -30,15 +30,6 @@ class PlaylistViewModel(
         getPlaylistTracks()
     }
 
-    private fun getPlaylist() {
-        viewModelScope.launch {
-            playlistsInteractor.getPlaylistById(playlistId)
-                .collect { result ->
-                    _playlist.value = result
-                }
-        }
-    }
-
     fun getPlaylistTracks() {
         viewModelScope.launch {
             playlistsInteractor.getTracksInPlaylist(playlistId)
@@ -49,16 +40,29 @@ class PlaylistViewModel(
         }
     }
 
-    private fun getPlaylistDuration(tracks: List<Track>) {
-        val totalMillis = tracks.sumOf { it.trackTimeMillis }
-        _playlistDuration.value = SimpleDateFormat("mm", Locale.getDefault()).format(totalMillis)
-    }
-
     fun removeTrackFromPlaylist(track: Track) {
         viewModelScope.launch {
             playlistsInteractor.removeTrackFromPlaylist(track.trackId, playlistId)
             getPlaylist()
             getPlaylistTracks()
         }
+    }
+
+    fun sharePlaylist(text: String) {
+        playlistsInteractor.sharePlaylist(text)
+    }
+
+    private fun getPlaylist() {
+        viewModelScope.launch {
+            playlistsInteractor.getPlaylistById(playlistId)
+                .collect { result ->
+                    _playlist.value = result
+                }
+        }
+    }
+
+    private fun getPlaylistDuration(tracks: List<Track>) {
+        val totalMillis = tracks.sumOf { it.trackTimeMillis }
+        _playlistDuration.value = SimpleDateFormat("mm", Locale.getDefault()).format(totalMillis)
     }
 }
