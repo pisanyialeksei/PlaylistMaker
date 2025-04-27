@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -60,6 +61,7 @@ class PlaylistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        playlistViewModel.getPlaylist()
         playlistViewModel.getPlaylistTracks()
     }
 
@@ -116,6 +118,8 @@ class PlaylistFragment : Fragment() {
         with(binding) {
             Glide.with(requireContext())
                 .load(playlist.cover)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.track_artwork_player_placeholder)
                 .transform(CenterCrop())
                 .into(playlistCoverImageView)
@@ -169,6 +173,14 @@ class PlaylistFragment : Fragment() {
             getShareClickListener()
         }
 
+        binding.menuEditTextView.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            val navDirection = PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(
+                args.playlistId,
+            )
+            findNavController().navigate(navDirection)
+        }
+
         binding.menuDeleteTextView.setOnClickListener {
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             showPlaylistDeletionDialog()
@@ -213,6 +225,8 @@ class PlaylistFragment : Fragment() {
 
             Glide.with(requireContext())
                 .load(playlist.cover)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.track_artwork_list_placeholder)
                 .transform(CenterCrop())
                 .into(coverImageView)

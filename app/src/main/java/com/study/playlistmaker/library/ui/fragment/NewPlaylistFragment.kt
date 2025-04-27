@@ -30,14 +30,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private lateinit var binding: FragmentNewPlaylistBinding
+    lateinit var binding: FragmentNewPlaylistBinding
 
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    open val viewModel: NewPlaylistViewModel by viewModel()
     private val stringProvider: StringProvider by inject()
 
-    private var coverImageUri: Uri? = null
+    var coverImageUri: Uri? = null
 
     private val visualMediaPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -125,7 +125,7 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    private fun getCoverFile(): File {
+    fun getCoverFile(): File {
         val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
         val fileName = "playlist_${playlistName.replace(" ", "_").lowercase()}.jpg"
         val directoryPath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlists")
@@ -137,7 +137,7 @@ class NewPlaylistFragment : Fragment() {
         return File(directoryPath, fileName)
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri, outputFile: File) {
+    fun saveImageToPrivateStorage(uri: Uri, outputFile: File) {
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(outputFile)
         BitmapFactory

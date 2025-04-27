@@ -49,4 +49,6 @@
     <string name="edit_playlist">Edit info</string>
     <string name="delete_playlist">Delete playlist</string>
     <string name="playlist_deletion_confirmation">Want to delete playlist \"%s\"?</string>
+    <string name="edit_playlist_title">Edit</string>
+    <string name="save">Save</string>
 </resources>

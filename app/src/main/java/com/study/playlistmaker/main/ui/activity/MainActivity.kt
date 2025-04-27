@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val shouldHideBottomNavigation = destination.id in listOf(
+                R.id.editPlaylistFragment,
                 R.id.newPlaylistFragment,
                 R.id.playerFragment,
                 R.id.playlistFragment

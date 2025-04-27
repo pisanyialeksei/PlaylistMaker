@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.study.playlistmaker.R
@@ -41,6 +42,8 @@ class PlaylistsAdapter(
             val context = itemView.context
             Glide.with(context)
                 .load(model.cover)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.track_artwork_player_placeholder)
                 .transform(
                     CenterCrop(),

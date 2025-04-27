@@ -33,6 +33,15 @@ class PlaylistViewModel(
         getPlaylistTracks()
     }
 
+    fun getPlaylist() {
+        viewModelScope.launch {
+            playlistsInteractor.getPlaylistById(playlistId)
+                .collect { result ->
+                    _playlist.value = result
+                }
+        }
+    }
+
     fun getPlaylistTracks() {
         viewModelScope.launch {
             playlistsInteractor.getTracksInPlaylist(playlistId)
@@ -59,15 +68,6 @@ class PlaylistViewModel(
         viewModelScope.launch {
             playlistsInteractor.deletePlaylistById(playlistId)
             _playlistDeleted.postValue(true)
-        }
-    }
-
-    private fun getPlaylist() {
-        viewModelScope.launch {
-            playlistsInteractor.getPlaylistById(playlistId)
-                .collect { result ->
-                    _playlist.value = result
-                }
         }
     }
 
