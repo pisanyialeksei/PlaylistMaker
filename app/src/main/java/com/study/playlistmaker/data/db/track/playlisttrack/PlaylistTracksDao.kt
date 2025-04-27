@@ -25,6 +25,9 @@ interface PlaylistTracksDao {
     @Query("SELECT EXISTS(SELECT 1 FROM playlist_tracks WHERE trackId = :trackId)")
     suspend fun isTrackInAnyPlaylist(trackId: Long): Boolean
 
+    @Query("SELECT trackId FROM playlist_tracks WHERE playlistId = :playlistId")
+    suspend fun getTrackIdsInPlaylist(playlistId: Long): List<Long>
+
     @Transaction
     @Query(
         """

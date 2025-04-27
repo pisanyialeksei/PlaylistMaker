@@ -40,6 +40,10 @@ class PlaylistsInteractorImpl(
         return repository.getTracksInPlaylist(playlistId)
     }
 
+    override suspend fun deletePlaylistById(playlistId: Long) {
+        repository.deletePlaylistById(playlistId)
+    }
+
     override fun sharePlaylist(text: String) {
         externalNavigator.share(text)
     }

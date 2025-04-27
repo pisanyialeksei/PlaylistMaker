@@ -77,4 +77,18 @@ class PlaylistsRepositoryImpl(
         }
         emit(tracks)
     }
+
+    override suspend fun deletePlaylistById(playlistId: Long) {
+        val trackIds = appDatabase.playlistTracksDao().getTrackIdsInPlaylist(playlistId)
+
+        appDatabase.playlistsDao().deletePlaylistById(playlistId)
+
+        for (trackId in trackIds) {
+            val isInOtherPlaylists = appDatabase.playlistTracksDao().isTrackInAnyPlaylist(trackId)
+            val isFavorite = appDatabase.favoritesDao().isTrackFavorite(trackId)
+            if (!isInOtherPlaylists && !isFavorite) {
+                appDatabase.trackDao().deleteTrackById(trackId)
+            }
+        }
+    }
 }

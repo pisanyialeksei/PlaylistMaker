@@ -104,6 +104,12 @@ class PlaylistFragment : Fragment() {
         playlistViewModel.playlistDuration.observe(viewLifecycleOwner) { duration ->
             binding.playlistLength.text = duration
         }
+
+        playlistViewModel.playlistDeleted.observe(viewLifecycleOwner) { isDeleted ->
+            if (isDeleted) {
+                findNavController().navigateUp()
+            }
+        }
     }
 
     private fun renderPlaylistInfo(playlist: Playlist) {
@@ -159,8 +165,13 @@ class PlaylistFragment : Fragment() {
         }
 
         binding.menuShareTextView.setOnClickListener {
-            getShareClickListener()
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            getShareClickListener()
+        }
+
+        binding.menuDeleteTextView.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            showPlaylistDeletionDialog()
         }
     }
 
@@ -173,6 +184,20 @@ class PlaylistFragment : Fragment() {
             }
             .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 playlistViewModel.removeTrackFromPlaylist(track)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showPlaylistDeletionDialog() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
+            .setTitle(getString(R.string.playlist_deletion_confirmation, playlistViewModel.playlist.value!!.name))
+            .setMessage("")
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                playlistViewModel.deletePlaylist()
                 dialog.dismiss()
             }
             .show()

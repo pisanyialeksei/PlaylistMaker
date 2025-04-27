@@ -25,6 +25,9 @@ class PlaylistViewModel(
     private val _playlistDuration = MutableLiveData<String>()
     val playlistDuration: LiveData<String> = _playlistDuration
 
+    private val _playlistDeleted = MutableLiveData<Boolean>()
+    val playlistDeleted: LiveData<Boolean> = _playlistDeleted
+
     init {
         getPlaylist()
         getPlaylistTracks()
@@ -50,6 +53,13 @@ class PlaylistViewModel(
 
     fun sharePlaylist(text: String) {
         playlistsInteractor.sharePlaylist(text)
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            playlistsInteractor.deletePlaylistById(playlistId)
+            _playlistDeleted.postValue(true)
+        }
     }
 
     private fun getPlaylist() {
