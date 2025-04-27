@@ -4,7 +4,7 @@
     <string name="library_title">Медиатека</string>
     <string name="settings_title">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="share">Поделиться приложением</string>
+    <string name="share_app">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="share_link" translatable="false">https://practicum.yandex.kz/android-developer</string>
@@ -49,4 +49,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="empty_playlist_toast">Плейлист пуст</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
 </resources>

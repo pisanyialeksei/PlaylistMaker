@@ -5,7 +5,7 @@
     <string name="library_title">Library</string>
     <string name="settings_title">Settings</string>
     <string name="dark_theme">Dark theme</string>
-    <string name="share">Share application</string>
+    <string name="share_app">Share application</string>
     <string name="support">Contact support</string>
     <string name="user_agreement">User agreement</string>
     <string name="support_mail_subject">Message to the developers  of the Playlist Maker app</string>
@@ -45,4 +45,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="empty_playlist_toast">Playlist is empty</string>
+    <string name="share">Share</string>
+    <string name="edit_playlist">Edit info</string>
+    <string name="delete_playlist">Delete playlist</string>
 </resources>

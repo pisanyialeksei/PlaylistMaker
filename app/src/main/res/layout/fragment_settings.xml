@@ -33,7 +33,7 @@
         style="@style/SettingsButton"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_button_height"
-        android:text="@string/share"
+        android:text="@string/share_app"
         app:icon="@drawable/ic_share" />
 
     <com.google.android.material.button.MaterialButton

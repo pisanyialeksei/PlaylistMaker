@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -29,6 +33,7 @@ class PlaylistFragment : Fragment() {
 
     private lateinit var tracksAdapter: TracksAdapter
     private lateinit var tracksBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
@@ -47,6 +52,7 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupBottomSheets()
         setupAdapters()
         setupObservers()
         setupClickListeners()
@@ -57,9 +63,38 @@ class PlaylistFragment : Fragment() {
         playlistViewModel.getPlaylistTracks()
     }
 
+    private fun setupBottomSheets() {
+        tracksBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistTracksBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        menuBottomSheetBehavior = BottomSheetBehavior.from(binding.menuBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.isVisible = false
+                        }
+                        else -> {
+                            binding.overlay.isVisible = true
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            })
+        }
+
+        binding.overlay.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
     private fun setupObservers() {
         playlistViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             renderPlaylistInfo(playlist)
+            setupMenuHeader(playlist)
         }
 
         playlistViewModel.playlistTracks.observe(viewLifecycleOwner) { tracks ->
@@ -116,24 +151,16 @@ class PlaylistFragment : Fragment() {
         }
 
         binding.playlistShareButton.setOnClickListener {
-            val tracks = playlistViewModel.playlistTracks.value
+            getShareClickListener()
+        }
 
-            if (tracks.isNullOrEmpty()) {
-                showToast(requireContext(), requireContext().getString(R.string.empty_playlist_toast))
-            } else {
-                val trackListText = tracks.mapIndexed { index, track ->
-                    "${index + 1}. ${track.artistName} - ${track.trackName} (${formatMsToDuration(track.trackTimeMillis)})"
-                }.joinToString("\n")
+        binding.playlistMenuButton.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
-                val intentText = """
-                    ${binding.playlistName.text}
-                    ${binding.playlistDescription.text}
-                    ${binding.playlistCount.text}:
-                    $trackListText
-                    """.trimIndent()
-
-                playlistViewModel.sharePlaylist(intentText)
-            }
+        binding.menuShareTextView.setOnClickListener {
+            getShareClickListener()
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
@@ -149,6 +176,51 @@ class PlaylistFragment : Fragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun setupMenuHeader(playlist: Playlist) {
+        val headerView = binding.menuBottomSheet.findViewById<ConstraintLayout>(R.id.menu_header)
+
+        with(headerView) {
+            val coverImageView = findViewById<ImageView>(R.id.bottom_sheet_playlist_item_cover)
+            val nameTextView = findViewById<TextView>(R.id.bottom_sheet_playlist_item_name)
+            val counterTextView = findViewById<TextView>(R.id.bottom_sheet_playlist_item_counter)
+
+            Glide.with(requireContext())
+                .load(playlist.cover)
+                .placeholder(R.drawable.track_artwork_list_placeholder)
+                .transform(CenterCrop())
+                .into(coverImageView)
+
+            nameTextView.text = playlist.name
+
+            counterTextView.text = requireContext().resources.getQuantityString(
+                R.plurals.playlist_tracks_count,
+                playlist.tracksCount,
+                playlist.tracksCount
+            )
+        }
+    }
+
+    private fun getShareClickListener() {
+        val tracks = playlistViewModel.playlistTracks.value
+
+        if (tracks.isNullOrEmpty()) {
+            showToast(requireContext(), requireContext().getString(R.string.empty_playlist_toast))
+        } else {
+            val trackListText = tracks.mapIndexed { index, track ->
+                "${index + 1}. ${track.artistName} - ${track.trackName} (${formatMsToDuration(track.trackTimeMillis)})"
+            }.joinToString("\n")
+
+            val intentText = """
+                    ${binding.playlistName.text}
+                    ${binding.playlistDescription.text}
+                    ${binding.playlistCount.text}:
+                    $trackListText
+                    """.trimIndent()
+
+            playlistViewModel.sharePlaylist(intentText)
+        }
     }
 
     override fun onDestroyView() {

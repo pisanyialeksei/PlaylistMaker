@@ -43,7 +43,7 @@
         android:layout_marginBottom="14dp"
         android:fontFamily="@font/ys_display_regular"
         android:maxLines="1"
-        android:textColor="?attr/colorOnPrimary"
+        android:textColor="?attr/colorSecondary"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
