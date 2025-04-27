@@ -40,7 +40,10 @@ val viewModelModule = module {
     }
 
     viewModel {
-        NewPlaylistViewModel(playlistsInteractor = get())
+        NewPlaylistViewModel(
+            playlistsInteractor = get(),
+            playlistStorageService = get(),
+        )
     }
 
     viewModel { (playlistId: Long) ->
@@ -53,7 +56,8 @@ val viewModelModule = module {
     viewModel { (playlistId: Long) ->
         EditPlaylistViewModel(
             playlistsInteractor = get(),
-            playlistId = playlistId
+            playlistStorageService = get(),
+            playlistId = playlistId,
         )
     }
 }

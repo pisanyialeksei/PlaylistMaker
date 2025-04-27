@@ -3,13 +3,16 @@ package com.study.playlistmaker.library.domain.impl
 import com.study.playlistmaker.library.domain.PlaylistsInteractor
 import com.study.playlistmaker.library.domain.PlaylistsRepository
 import com.study.playlistmaker.library.domain.model.Playlist
+import com.study.playlistmaker.library.domain.storage.PlaylistStorageService
 import com.study.playlistmaker.search.domain.model.Track
 import com.study.playlistmaker.sharing.data.ExternalNavigator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class PlaylistsInteractorImpl(
     private val repository: PlaylistsRepository,
     private val externalNavigator: ExternalNavigator,
+    private val playlistStorageService: PlaylistStorageService,
 ) : PlaylistsInteractor {
 
     override suspend fun createPlaylist(playlist: Playlist) {
@@ -41,7 +44,11 @@ class PlaylistsInteractorImpl(
     }
 
     override suspend fun deletePlaylistById(playlistId: Long) {
+        val playlist = getPlaylistById(playlistId).first()
         repository.deletePlaylistById(playlistId)
+        playlist.cover?.let {
+            playlistStorageService.deleteCoverFile(it)
+        }
     }
 
     override fun sharePlaylist(text: String) {

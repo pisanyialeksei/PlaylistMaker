@@ -86,16 +86,10 @@ class EditPlaylistFragment : NewPlaylistFragment() {
         val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
         val description = binding.playlistDescriptionTextInputLayout.editText?.text.toString()
 
-        val coverPath = coverImageUri?.let {
-            val file = getCoverFile()
-            saveImageToPrivateStorage(it, file)
-            file.absolutePath
-        }
-
         viewModel.updatePlaylist(
             name = playlistName,
             description = description,
-            coverPath = coverPath
+            coverUri = coverImageUri
         )
 
         findNavController().navigateUp()
