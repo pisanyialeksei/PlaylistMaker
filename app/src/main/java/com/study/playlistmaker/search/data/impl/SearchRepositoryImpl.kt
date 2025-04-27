@@ -29,7 +29,7 @@ class SearchRepositoryImpl(
     override fun searchTracks(query: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(SearchRequest(query))
         if (response.resultCode == 200) {
-            val favorites = appDatabase.trackDao().getAllTrackIds()
+            val favorites = appDatabase.favoritesDao().getFavoriteTrackIds()
             emit(
                 (response as? SearchResponse)?.results?.map {
                     Track(
@@ -73,7 +73,7 @@ class SearchRepositoryImpl(
     }
 
     override suspend fun getFavoriteTrackIds(): List<Long> {
-        return appDatabase.trackDao().getAllTrackIds()
+        return appDatabase.favoritesDao().getFavoriteTrackIds()
     }
 
     private fun getHistory(): MutableList<Track> {

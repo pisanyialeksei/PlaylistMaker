@@ -15,6 +15,7 @@ import com.study.playlistmaker.utils.formatMsToDuration
 class TracksAdapter(
     private val trackList: MutableList<Track>,
     private val clickListener: (Track) -> Unit,
+    private val longClickListener: ((Track) -> Boolean)? = null,
 ) : RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
@@ -27,11 +28,7 @@ class TracksAdapter(
     }
 
     override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
-        val item = trackList[position]
-        holder.bind(item)
-        holder.itemView.setOnClickListener {
-            clickListener.invoke(item)
-        }
+        holder.bind(trackList[position])
     }
 
     fun updateData(newTrackList: List<Track>) {
@@ -40,7 +37,7 @@ class TracksAdapter(
         notifyDataSetChanged()
     }
 
-    class TracksViewHolder(private val binding: TracksItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TracksViewHolder(private val binding: TracksItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: Track) {
             val context = itemView.context
@@ -58,6 +55,16 @@ class TracksAdapter(
             binding.tracksItemDuration.text = formatMsToDuration(model.trackTimeMillis)
 
             binding.tracksItemArtist.requestLayout()
+
+            itemView.setOnClickListener {
+                clickListener.invoke(model)
+            }
+
+            if (longClickListener != null) {
+                itemView.setOnLongClickListener {
+                    longClickListener.invoke(model)
+                }
+            }
         }
     }
 }

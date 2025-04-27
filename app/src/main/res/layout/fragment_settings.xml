@@ -21,7 +21,7 @@
         android:id="@+id/themeSwitcher"
         style="@style/SettingsButton"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
+        android:layout_height="@dimen/option_height"
         android:paddingStart="16dp"
         android:paddingEnd="18dp"
         android:text="@string/dark_theme"
@@ -32,15 +32,15 @@
         android:id="@+id/share"
         style="@style/SettingsButton"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
-        android:text="@string/share"
+        android:layout_height="@dimen/option_height"
+        android:text="@string/share_app"
         app:icon="@drawable/ic_share" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/support"
         style="@style/SettingsButton"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
+        android:layout_height="@dimen/option_height"
         android:text="@string/support"
         app:icon="@drawable/ic_support" />
 
@@ -48,7 +48,7 @@
         android:id="@+id/agreement"
         style="@style/SettingsButton"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button_height"
+        android:layout_height="@dimen/option_height"
         android:text="@string/user_agreement"
         app:icon="@drawable/ic_arrow_forward" />
 

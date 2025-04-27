@@ -4,7 +4,7 @@
     <string name="library_title">Медиатека</string>
     <string name="settings_title">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="share">Поделиться приложением</string>
+    <string name="share_app">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="share_link" translatable="false">https://practicum.yandex.kz/android-developer</string>
@@ -33,7 +33,7 @@
     <string name="no_image_toast">Изображение не выбрано</string>
     <string name="new_playlist_cancellation_title">Завершить создание плейлиста?</string>
     <string name="new_playlist_cancellation_message">Все несохраненные данные будут потеряны</string>
-    <string name="new_playlist_cancellation_negative_button">Отмена</string>
+    <string name="cancel">Отмена</string>
     <string name="new_playlist_cancellation_positive_button">Завершить</string>
     <string name="playlist_created">Плейлист %s создан</string>
     <plurals name="playlist_tracks_count">
@@ -45,4 +45,20 @@
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="track_added_to_playlist">Добавлено в плейлист %s</string>
     <string name="track_contains_in_playlist">Трек уже добавлен в плейлист %s</string>
+    <string name="track_deletion_confirmation">Вы уверены, что хотите удалить трек из плейлиста</string>
+    <string name="empty_playlist_toast">Плейлист пуст</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="playlist_deletion_confirmation">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="edit_playlist_title">"Редактировать</string>
+    <string name="save">"Сохранить</string>
+    <plurals name="playlist_duration">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+    <string name="empty_playlist">В этом плейлисте еще нет треков</string>
+    <string name="delete">Удалить</string>
 </resources>

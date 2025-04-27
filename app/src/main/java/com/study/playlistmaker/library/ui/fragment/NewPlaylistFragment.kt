@@ -1,10 +1,7 @@
 package com.study.playlistmaker.library.ui.fragment
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,17 +24,15 @@ import com.study.playlistmaker.utils.dpToPx
 import com.study.playlistmaker.utils.showToast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private lateinit var binding: FragmentNewPlaylistBinding
+    lateinit var binding: FragmentNewPlaylistBinding
 
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    open val viewModel: NewPlaylistViewModel by viewModel()
     private val stringProvider: StringProvider by inject()
 
-    private var coverImageUri: Uri? = null
+    var coverImageUri: Uri? = null
 
     private val visualMediaPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -108,41 +103,16 @@ class NewPlaylistFragment : Fragment() {
 
         binding.newPlaylistCreateButton.setOnClickListener {
             val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
-            val coverPath = coverImageUri?.let {
-                val file = getCoverFile()
-                saveImageToPrivateStorage(coverImageUri!!, file)
-                file.absolutePath
-            }
 
             viewModel.createPlaylist(
                 name = playlistName,
                 description = binding.playlistDescriptionTextInputLayout.editText?.text.toString(),
-                coverPath = coverPath
+                coverUri = coverImageUri,
             )
 
             findNavController().navigateUp()
             showToast(requireContext(), stringProvider.getString(R.string.playlist_created, playlistName))
         }
-    }
-
-    private fun getCoverFile(): File {
-        val playlistName = binding.playlistNameTextInputLayout.editText?.text.toString()
-        val fileName = "playlist_${playlistName.replace(" ", "_").lowercase()}.jpg"
-        val directoryPath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlists")
-
-        if (!directoryPath.exists()) {
-            directoryPath.mkdirs()
-        }
-
-        return File(directoryPath, fileName)
-    }
-
-    private fun saveImageToPrivateStorage(uri: Uri, outputFile: File) {
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(outputFile)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
     private fun handleBackNavigation() {
@@ -153,7 +123,7 @@ class NewPlaylistFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialog)
                 .setTitle(stringProvider.getString(R.string.new_playlist_cancellation_title))
                 .setMessage(stringProvider.getString(R.string.new_playlist_cancellation_message))
-                .setNegativeButton(stringProvider.getString(R.string.new_playlist_cancellation_negative_button)) { dialog, _ ->
+                .setNegativeButton(stringProvider.getString(R.string.cancel)) { dialog, _ ->
                     dialog.cancel()
                 }
                 .setPositiveButton(stringProvider.getString(R.string.new_playlist_cancellation_positive_button)) { _, _ ->

@@ -22,22 +22,30 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.newPlaylistFragment || destination.id == R.id.playerFragment) {
-                binding.bottomNavigationView.animate()
-                    .alpha(0f)
-                    .setDuration(300)
-                    .withEndAction {
-                        binding.bottomNavigationView.isVisible = false
-                        binding.bottomNavigationView.alpha = 1f
-                    }
-                    .start()
-            } else if (!binding.bottomNavigationView.isVisible) {
-                binding.bottomNavigationView.alpha = 0f
-                binding.bottomNavigationView.isVisible = true
-                binding.bottomNavigationView.animate()
-                    .alpha(1f)
-                    .setDuration(300)
-                    .start()
+            val shouldHideBottomNavigation = destination.id in listOf(
+                R.id.editPlaylistFragment,
+                R.id.newPlaylistFragment,
+                R.id.playerFragment,
+                R.id.playlistFragment
+            )
+
+            when {
+                shouldHideBottomNavigation && binding.bottomNavigationView.isVisible -> {
+                    binding.bottomNavigationView.animate()
+                        .alpha(0f)
+                        .setDuration(300)
+                        .withEndAction {
+                            binding.bottomNavigationView.isVisible = false
+                        }
+                        .start()
+                }
+                !shouldHideBottomNavigation && !binding.bottomNavigationView.isVisible -> {
+                    binding.bottomNavigationView.isVisible = true
+                    binding.bottomNavigationView.animate()
+                        .alpha(1f)
+                        .setDuration(300)
+                        .start()
+                }
             }
         }
     }
