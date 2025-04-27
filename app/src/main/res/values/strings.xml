@@ -45,4 +45,7 @@
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="track_added_to_playlist">Добавлено в плейлист %s</string>
     <string name="track_contains_in_playlist">Трек уже добавлен в плейлист %s</string>
+    <string name="track_deletion_confirmation">Хотите удалить трек?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

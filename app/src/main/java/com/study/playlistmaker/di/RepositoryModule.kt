@@ -53,7 +53,7 @@ val repositoryModule = module {
         PlaylistsRepositoryImpl(
             appDatabase = get(),
             playlistDbConverter = get(),
-            gson = get(),
+            trackDbConverter = get(),
         )
     }
 }

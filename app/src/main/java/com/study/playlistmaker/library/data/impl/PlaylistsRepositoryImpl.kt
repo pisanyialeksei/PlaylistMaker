@@ -1,63 +1,80 @@
 package com.study.playlistmaker.library.data.impl
 
-import com.google.gson.Gson
 import com.study.playlistmaker.data.db.AppDatabase
 import com.study.playlistmaker.data.db.playlist.PlaylistDbConverter
+import com.study.playlistmaker.data.db.track.TrackDbConverter
+import com.study.playlistmaker.data.db.track.playlisttrack.PlaylistTrackEntity
 import com.study.playlistmaker.library.domain.PlaylistsRepository
 import com.study.playlistmaker.library.domain.model.Playlist
+import com.study.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class PlaylistsRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistDbConverter: PlaylistDbConverter,
-    private val gson: Gson,
+    private val trackDbConverter: TrackDbConverter,
 ) : PlaylistsRepository {
 
     override suspend fun createPlaylist(playlist: Playlist) {
-        appDatabase.playlistDao().createPlaylist(playlistDbConverter.map(playlist))
+        appDatabase.playlistsDao().createPlaylist(playlistDbConverter.map(playlist))
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
-        appDatabase.playlistDao().updatePlaylist(playlistDbConverter.map(playlist))
+        appDatabase.playlistsDao().updatePlaylist(playlistDbConverter.map(playlist))
     }
 
     override suspend fun getPlaylists(): Flow<List<Playlist>> = flow {
-        val playlistEntities = appDatabase.playlistDao().getPlaylists()
+        val playlistEntities = appDatabase.playlistsDao().getPlaylists()
         val playlists = playlistEntities.map { playlistEntity ->
-            playlistDbConverter.map(playlistEntity)
+            val tracksCount = appDatabase.playlistTracksDao().getPlaylistTracksCount(playlistEntity.playlistId)
+            playlistDbConverter.map(playlistEntity, tracksCount)
         }
         emit(playlists)
     }
 
     override suspend fun getPlaylistById(playlistId: Long): Flow<Playlist> = flow {
-        val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
-        val playlist = playlistDbConverter.map(playlistEntity)
+        val playlistEntity = appDatabase.playlistsDao().getPlaylistById(playlistId)
+        val tracksCount = appDatabase.playlistTracksDao().getPlaylistTracksCount(playlistId)
+        val playlist = playlistDbConverter.map(playlistEntity, tracksCount)
         emit(playlist)
     }
 
-    override suspend fun addTrackToPlaylist(trackId: Long, playlistId: Long): Boolean {
-        val playlists = appDatabase.playlistDao().getPlaylists()
-        val playlist = playlists.find { it.playlistId == playlistId }
-            ?: error("Playlist not found")
-
-        val trackIds = if (playlist.tracks.isNullOrEmpty()) {
-            mutableListOf()
-        } else {
-            gson.fromJson(playlist.tracks, Array<Long>::class.java).toMutableList()
+    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long): Boolean {
+        val trackAlreadyAdded = appDatabase.playlistTracksDao().isTrackInPlaylist(playlistId, track.trackId)
+        if (trackAlreadyAdded) {
+            return true
         }
 
-        val isTrackInPlaylist = trackIds.contains(trackId)
+        appDatabase.trackDao().insertTrack(trackDbConverter.map(track))
 
-        if (!isTrackInPlaylist) {
-            trackIds.add(trackId)
-            val updatedPlaylist = playlist.copy(
-                tracks = gson.toJson(trackIds),
-                tracksCount = playlist.tracksCount + 1
+        appDatabase.playlistTracksDao().addTrackToPlaylist(
+            PlaylistTrackEntity(
+                playlistId = playlistId,
+                trackId = track.trackId,
+                timestamp = System.currentTimeMillis()
             )
-            appDatabase.playlistDao().updatePlaylist(updatedPlaylist)
-        }
+        )
 
-        return isTrackInPlaylist
+        return false
+    }
+
+    override suspend fun removeTrackFromPlaylist(trackId: Long, playlistId: Long) {
+        appDatabase.playlistTracksDao().removeTrackFromPlaylist(playlistId, trackId)
+
+        val isInOtherPlaylists = appDatabase.playlistTracksDao().isTrackInAnyPlaylist(trackId)
+        val isFavorite = appDatabase.favoritesDao().isTrackFavorite(trackId)
+        if (!isInOtherPlaylists && !isFavorite) {
+            appDatabase.trackDao().deleteTrackById(trackId)
+        }
+    }
+
+    override suspend fun getTracksInPlaylist(playlistId: Long): Flow<List<Track>> = flow {
+        val trackEntities = appDatabase.playlistTracksDao().getTracksInPlaylist(playlistId)
+        val favoriteIds = appDatabase.favoritesDao().getFavoriteTrackIds().toSet()
+        val tracks = trackEntities.map { entity ->
+            trackDbConverter.map(entity, isFavorite = favoriteIds.contains(entity.trackId))
+        }
+        emit(tracks)
     }
 }

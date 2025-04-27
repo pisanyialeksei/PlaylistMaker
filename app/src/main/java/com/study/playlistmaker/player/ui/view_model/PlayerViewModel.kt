@@ -98,7 +98,7 @@ class PlayerViewModel(
         val result = MutableLiveData<Boolean>()
 
         viewModelScope.launch {
-            val trackAlreadyAdded = playlistsInteractor.addTrackToPlaylist(track.trackId, playlist.playlistId)
+            val trackAlreadyAdded = playlistsInteractor.addTrackToPlaylist(track.toDomainTrack(), playlist.playlistId)
             result.postValue(trackAlreadyAdded)
         }
 

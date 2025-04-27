@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@color/yp_light_gray"
     tools:context=".library.ui.fragment.PlaylistFragment">
 
     <ImageView
@@ -121,19 +122,27 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_more"
         android:backgroundTint="@color/yp_black"
-        app:layout_constraintBottom_toTopOf="@id/playlist_tracks_bottom_sheet"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
         app:layout_constraintStart_toEndOf="@id/playlist_share_button"
         app:layout_constraintTop_toBottomOf="@id/playlist_length" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="playlist_share_button" />
 
 
     <LinearLayout
         android:id="@+id/playlist_tracks_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:background="@drawable/playlist_bottom_sheet_background"
         android:minHeight="500dp"
         android:orientation="vertical"
-        app:behavior_hideable="true"
+        app:behavior_hideable="false"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
